@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe RuboCop::Cop::RSpec::Rails::NegationBeValid do
+RSpec.describe RuboCop::Cop::RSpecRails::NegationBeValid do
   let(:cop_config) { { 'EnforcedStyle' => enforced_style } }
 
   context 'with EnforcedStyle `not_to`' do

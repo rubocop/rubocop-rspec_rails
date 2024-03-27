@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe RuboCop::Cop::RSpec::Rails::TravelAround do
+RSpec.describe RuboCop::Cop::RSpecRails::TravelAround do
   context 'with `freeze_time` in `before`' do
     it 'registers no offense' do
       expect_no_offenses(<<~RUBY)

@@ -4,9 +4,9 @@
   Please make any necessary changes to the cop documentation within the source files themselves.
 ////
 
-= RSpec/Rails
+= RSpecRails
 
-== RSpec/Rails/AvoidSetupHook
+== RSpecRails/AvoidSetupHook
 
 |===
 | Enabled by default | Safe | Supports autocorrection | Version Added | Version Changed
@@ -37,9 +37,9 @@ end
 
 === References
 
-* https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/Rails/AvoidSetupHook
+* https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/AvoidSetupHook
 
-== RSpec/Rails/HaveHttpStatus
+== RSpecRails/HaveHttpStatus
 
 |===
 | Enabled by default | Safe | Supports autocorrection | Version Added | Version Changed
@@ -95,9 +95,9 @@ expect(last_response).to have_http_status(200)
 
 === References
 
-* https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/Rails/HaveHttpStatus
+* https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/HaveHttpStatus
 
-== RSpec/Rails/HttpStatus
+== RSpecRails/HttpStatus
 
 |===
 | Enabled by default | Safe | Supports autocorrection | Version Added | Version Changed
@@ -183,9 +183,9 @@ it { is_expected.to have_http_status :error }
 
 === References
 
-* https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/Rails/HttpStatus
+* https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/HttpStatus
 
-== RSpec/Rails/InferredSpecType
+== RSpecRails/InferredSpecType
 
 |===
 | Enabled by default | Safe | Supports autocorrection | Version Added | Version Changed
@@ -234,7 +234,7 @@ end
 [source,ruby]
 ----
 # .rubocop.yml
-# RSpec/Rails/InferredSpecType:
+# RSpecRails/InferredSpecType:
 #   Inferences:
 #     services: service
 
@@ -266,9 +266,9 @@ end
 
 === References
 
-* https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/Rails/InferredSpecType
+* https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/InferredSpecType
 
-== RSpec/Rails/MinitestAssertions
+== RSpecRails/MinitestAssertions
 
 |===
 | Enabled by default | Safe | Supports autocorrection | Version Added | Version Changed
@@ -312,9 +312,9 @@ expect(a).to be(false)
 
 === References
 
-* https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/Rails/MinitestAssertions
+* https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/MinitestAssertions
 
-== RSpec/Rails/NegationBeValid
+== RSpecRails/NegationBeValid
 
 |===
 | Enabled by default | Safe | Supports autocorrection | Version Added | Version Changed
@@ -375,9 +375,9 @@ expect(foo).to be_invalid.or be_even
 
 === References
 
-* https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/Rails/NegationBeValid
+* https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/NegationBeValid
 
-== RSpec/Rails/TravelAround
+== RSpecRails/TravelAround
 
 |===
 | Enabled by default | Safe | Supports autocorrection | Version Added | Version Changed
@@ -417,4 +417,4 @@ before { freeze_time }
 
 === References
 
-* https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/Rails/TravelAround
+* https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/TravelAround

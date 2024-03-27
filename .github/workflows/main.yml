@@ -76,6 +76,25 @@ jobs:
           bundler-cache: true
       - run: NO_COVERAGE=true bundle exec rake ${{ matrix.task }}
 
+  edge-rubocop-rspec:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        task:
+          - internal_investigation
+          - spec
+    name: "Edge RuboCop RSpec: ${{ matrix.task }}"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use latest RuboCop RSpec from `master`
+        run: |
+          echo "gem 'rubocop-rspec', github: 'rubocop/rubocop-rspec'" > Gemfile.local
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+      - run: NO_COVERAGE=true bundle exec rake ${{ matrix.task }}
+
   rspec4:
     runs-on: ubuntu-latest
     name: RSpec 4

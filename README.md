@@ -1,33 +1,29 @@
-# RuboCop RSpec
+# RuboCop RSpec Rails
 
 [![Join the chat at https://gitter.im/rubocop-rspec/Lobby](https://badges.gitter.im/rubocop-rspec/Lobby.svg)](https://gitter.im/rubocop-rspec/Lobby)
-[![Gem Version](https://badge.fury.io/rb/rubocop-rspec.svg)](https://rubygems.org/gems/rubocop-rspec)
-![CI](https://github.com/rubocop/rubocop-rspec/workflows/CI/badge.svg)
+[![Gem Version](https://badge.fury.io/rb/rubocop-rspec_rails.svg)](https://rubygems.org/gems/rubocop-rspec_rails)
+![CI](https://github.com/rubocop/rubocop-rspec_rails/workflows/CI/badge.svg)
 
-[RSpec](https://rspec.info/)-specific analysis for your projects, as an extension to
+[RSpec Rails](https://rspec.info/)-specific analysis for your projects, as an extension to
 [RuboCop](https://github.com/rubocop/rubocop).
 
 ## Installation
 
-Just install the `rubocop-rspec` gem
+Just install the `rubocop-rspec_rails` gem
 
 ```bash
-gem install rubocop-rspec
+gem install rubocop-rspec_rails
 ```
 
 or if you use bundler put this in your `Gemfile`
 
 ```ruby
-gem 'rubocop-rspec', require: false
+gem 'rubocop-rspec_rails', require: false
 ```
-
-### Upgrading to RuboCop RSpec v2.x
-
-Read all the details in our [Upgrade to Version 2.x](https://docs.rubocop.org/rubocop-rspec/2.0/upgrade_to_version_2.html) document.
 
 ## Usage
 
-You need to tell RuboCop to load the RSpec extension. There are three
+You need to tell RuboCop to load the RSpec Rails extension. There are three
 ways to do this:
 
 ### RuboCop configuration file
@@ -35,53 +31,49 @@ ways to do this:
 Put this into your `.rubocop.yml`.
 
 ```yaml
-require: rubocop-rspec
+require: rubocop-rspec_rails
 ```
 
 Alternatively, use the following array notation when specifying multiple extensions.
 
 ```yaml
 require:
-  - rubocop-other-extension
   - rubocop-rspec
+  - rubocop-rspec_rails
 ```
 
-Now you can run `rubocop` and it will automatically load the RuboCop RSpec
+Now you can run `rubocop` and it will automatically load the RuboCop RSpec Rails
 cops together with the standard cops.
 
 ### Command line
 
 ```bash
-rubocop --require rubocop-rspec
+rubocop --require rubocop-rspec_rails
 ```
 
 ### Rake task
 
 ```ruby
 RuboCop::RakeTask.new do |task|
-  task.requires << 'rubocop-rspec'
+  task.requires << 'rubocop-rspec_rails'
 end
 ```
 
-### Code Climate
-
-rubocop-rspec is available on Code Climate as part of the rubocop engine. [Learn More](https://marketing.codeclimate.com/changelog/55a433bbe30ba00852000fac/).
-
 ## Documentation
 
-You can read more about RuboCop RSpec in its [official manual](https://docs.rubocop.org/rubocop-rspec).
+You can read more about RuboCop RSpec Rails in its [official manual](https://docs.rubocop.org/rubocop-rspec_rails).
 
 ## The Cops
 
 All cops are located under
-[`lib/rubocop/cop/rspec`](lib/rubocop/cop/rspec), and contain
+[`lib/rubocop/cop/rspec_rails`](lib/rubocop/cop/rspec_rails), and contain
 examples/documentation.
 
-In your `.rubocop.yml`, you may treat the RSpec cops just like any other
+In your `.rubocop.yml`, you may treat the RSpec Rails cops just like any other
 cop. For example:
 
 ```yaml
-RSpec/FilePath:
+RSpecRails/AvoidSetupHook:
   Exclude:
     - spec/my_poorly_named_spec_file.rb
 ```
@@ -92,5 +84,5 @@ Checkout the [contribution guidelines](.github/CONTRIBUTING.md).
 
 ## License
 
-`rubocop-rspec` is MIT licensed. [See the accompanying file](MIT-LICENSE.md) for
+`rubocop-rspec_rails` is MIT licensed. [See the accompanying file](MIT-LICENSE.md) for
 the full text.

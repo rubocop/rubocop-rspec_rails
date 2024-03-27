@@ -1,25 +1,22 @@
 # frozen_string_literal: true
 
 $LOAD_PATH.unshift File.expand_path('lib', __dir__)
-require 'rubocop/rspec/version'
+require 'rubocop/rspec_rails/version'
 
 Gem::Specification.new do |spec|
-  spec.name = 'rubocop-rspec'
-  spec.summary = 'Code style checking for RSpec files'
+  spec.name = 'rubocop-rspec_rails'
+  spec.summary = 'Code style checking for RSpec Rails files'
   spec.description = <<~DESCRIPTION
-    Code style checking for RSpec files.
+    Code style checking for RSpec Rails files.
     A plugin for the RuboCop code style enforcing & linting tool.
   DESCRIPTION
-  spec.homepage = 'https://github.com/rubocop/rubocop-rspec'
-  spec.authors = ['John Backus', 'Ian MacLeod', 'Nils Gemeinhardt']
-  spec.email = [
-    'johncbackus@gmail.com',
-    'ian@nevir.net',
-    'git@nilsgemeinhardt.de'
+  spec.homepage = 'https://github.com/rubocop/rubocop-rspec_rails'
+  spec.authors = [
+    'Benjamin Quorning', 'Phil Pirozhkov', 'Maxim Krizhanovsky', 'Yudai Takada'
   ]
   spec.licenses = ['MIT']
 
-  spec.version = RuboCop::RSpec::Version::STRING
+  spec.version = RuboCop::RSpecRails::Version::STRING
   spec.platform = Gem::Platform::RUBY
   spec.required_ruby_version = '>= 2.7.0'
 
@@ -32,12 +29,11 @@ Gem::Specification.new do |spec|
   spec.extra_rdoc_files = ['MIT-LICENSE.md', 'README.md']
 
   spec.metadata = {
-    'changelog_uri' => 'https://github.com/rubocop/rubocop-rspec/blob/master/CHANGELOG.md',
-    'documentation_uri' => 'https://docs.rubocop.org/rubocop-rspec/',
+    'changelog_uri' => 'https://github.com/rubocop/rubocop-rspec_rails/blob/master/CHANGELOG.md',
+    'documentation_uri' => 'https://docs.rubocop.org/rubocop-rspec_rails/',
     'rubygems_mfa_required' => 'true'
   }
 
   spec.add_runtime_dependency 'rubocop', '~> 1.40'
-  spec.add_runtime_dependency 'rubocop-capybara', '~> 2.17'
-  spec.add_runtime_dependency 'rubocop-factory_bot', '~> 2.22'
+  spec.add_runtime_dependency 'rubocop-rspec', '~> 2.27'
 end
