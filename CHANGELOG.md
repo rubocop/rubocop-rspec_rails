@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+## 2.28.0 (2024-03-28)
+
 - Extracted from `rubocop-rspec` into a separate repository. ([@ydah])
 
 ## Previously (see [rubocop-rspec's changelist](https://github.com/rubocop/rubocop-rspec/blob/v2.27.1/CHANGELOG.md) for details)
