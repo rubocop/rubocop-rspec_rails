@@ -9,15 +9,17 @@
 
 ## Installation
 
-Just install the `rubocop-rspec_rails` gem
+**This gem implicitly depends on the `rubocop-rspec` gem, so you should install it first.**
+Just install the `rubocop-rspec` and `rubocop-rspec_rails` gem
 
 ```bash
-gem install rubocop-rspec_rails
+gem install rubocop-rspec rubocop-rspec_rails
 ```
 
 or if you use bundler put this in your `Gemfile`
 
 ```ruby
+gem 'rubocop-rspec', require: false
 gem 'rubocop-rspec_rails', require: false
 ```
 

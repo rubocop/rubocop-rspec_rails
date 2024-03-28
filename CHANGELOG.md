@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+- Implicit dependency on RuboCop RSpec. Note that if you use rubocop-rspec_rails, you must also explicitly add rubocop-rspec to the Gemfile, because you are changing to an implicit dependency on RuboCop RSpec. ([@ydah])
+
 ## 2.28.0 (2024-03-28)
 
 - Extracted from `rubocop-rspec` into a separate repository. ([@ydah])
