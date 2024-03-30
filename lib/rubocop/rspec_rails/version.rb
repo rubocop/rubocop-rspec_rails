@@ -4,7 +4,7 @@ module RuboCop
   module RSpecRails
     # Version information for the RSpec Rails RuboCop plugin.
     module Version
-      STRING = '2.28.1'
+      STRING = '2.28.2'
     end
   end
 end
