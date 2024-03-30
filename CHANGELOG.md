@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+## 2.28.2 (2024-03-31)
+
 - Fix a `NameError` by Cross-Referencing. ([@ydah])
 - Fix an error for `RSpecRails/HttpStatus` when no rack gem is loaded with rubocop-rspec. ([@ydah])
 - Fix an error for unrecognized cop or department `RSpecRails/HttpStatus` when also using rubocop-rails. ([@ydah])
