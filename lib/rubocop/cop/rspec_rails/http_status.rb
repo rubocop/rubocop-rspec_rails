@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
-require 'rack/utils'
+begin
+  require 'rack/utils'
+rescue LoadError
+  # RSpecRails/HttpStatus cannot be loaded if rack/utils is unavailable.
+end
 
 module RuboCop
   module Cop
@@ -64,6 +68,8 @@ module RuboCop
         PATTERN
 
         def on_send(node)
+          return unless defined?(::Rack::Utils::SYMBOL_TO_STATUS_CODE)
+
           http_status(node) do |arg|
             return if arg.str_type? && arg.heredoc?
 
