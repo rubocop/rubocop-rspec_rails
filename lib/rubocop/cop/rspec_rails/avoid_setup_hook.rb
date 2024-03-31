@@ -16,7 +16,7 @@ module RuboCop
       #     allow(foo).to receive(:bar)
       #   end
       #
-      class AvoidSetupHook < ::RuboCop::Cop::RSpec::Base
+      class AvoidSetupHook < ::RuboCop::Cop::Base
         extend AutoCorrector
 
         MSG = 'Use `before` instead of `setup`.'

@@ -57,7 +57,7 @@ module RuboCop
       #   it { is_expected.to have_http_status :success }
       #   it { is_expected.to have_http_status :error }
       #
-      class HttpStatus < ::RuboCop::Cop::RSpec::Base
+      class HttpStatus < ::RuboCop::Cop::Base
         extend AutoCorrector
         include ConfigurableEnforcedStyle
         RESTRICT_ON_SEND = %i[have_http_status].freeze

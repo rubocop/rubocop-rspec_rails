@@ -23,7 +23,7 @@ module RuboCop
       #
       #   # good
       #   before { freeze_time }
-      class TravelAround < ::RuboCop::Cop::RSpec::Base
+      class TravelAround < ::RuboCop::Cop::Base
         extend AutoCorrector
 
         MSG = 'Prefer to travel in `before` rather than `around`.'
