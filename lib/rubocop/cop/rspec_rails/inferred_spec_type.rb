@@ -50,7 +50,7 @@ module RuboCop
       #   # spec/services/user_spec.rb
       #   RSpec.describe User, type: :common do
       #   end
-      class InferredSpecType < ::RuboCop::Cop::RSpec::Base
+      class InferredSpecType < ::RuboCop::Cop::Base
         extend AutoCorrector
 
         MSG = 'Remove redundant spec type.'
@@ -84,6 +84,35 @@ module RuboCop
             ...
           )
         PATTERN
+
+        # @!method example_group?(node)
+        def_node_matcher :example_group?, <<~PATTERN
+          ({block numblock}
+            (send #rspec? #ExampleGroups.all ...
+            ) ...
+          )
+        PATTERN
+
+        # @!method rspec?(node)
+        def_node_matcher :rspec?, <<~PATTERN
+          {
+            (const {nil? cbase} :RSpec)
+            nil?
+          }
+        PATTERN
+
+        module ExampleGroups # :nodoc:
+          REGULAR = %i[describe context feature example_group].freeze
+          SKIPPED = %i[xdescribe xcontext xfeature].freeze
+          FOCUSED = %i[fdescribe fcontext ffeature].freeze
+          ALL = REGULAR + SKIPPED + FOCUSED
+
+          class << self
+            def all(element)
+              ALL.include?(element)
+            end
+          end
+        end
 
         # @param [RuboCop::AST::Corrector] corrector
         # @param [RuboCop::AST::Node] node
