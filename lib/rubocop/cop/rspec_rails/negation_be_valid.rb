@@ -29,7 +29,7 @@ module RuboCop
       #   # good (with method chain)
       #   expect(foo).to be_invalid.or be_even
       #
-      class NegationBeValid < ::RuboCop::Cop::RSpec::Base
+      class NegationBeValid < ::RuboCop::Cop::Base
         extend AutoCorrector
         include ConfigurableEnforcedStyle
 
