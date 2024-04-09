@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+- Add new `RSpecRails/SettingsOverwritten` cop. ([@ydah])
+
 ## 2.28.2 (2024-03-31)
 
 - Fix a `NameError` by Cross-Referencing. ([@ydah])

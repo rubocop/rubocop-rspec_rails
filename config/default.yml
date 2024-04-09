@@ -75,6 +75,12 @@ RSpecRails/NegationBeValid:
   VersionAdded: '2.23'
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/NegationBeValid
 
+RSpecRails/SettingsOverwritten:
+  Description: Do not overwrite Settings directly, use mock instead.
+  Enabled: pending
+  VersionAdded: "<<next>>"
+  Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/SettingsOverwritten
+
 RSpecRails/TravelAround:
   Description: Prefer to travel in `before` rather than `around`.
   Enabled: pending

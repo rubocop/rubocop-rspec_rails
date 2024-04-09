@@ -377,6 +377,42 @@ expect(foo).to be_invalid.or be_even
 
 * https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/NegationBeValid
 
+== RSpecRails/SettingsOverwritten
+
+|===
+| Enabled by default | Safe | Supports autocorrection | Version Added | Version Changed
+
+| Pending
+| Yes
+| No
+| <<next>>
+| -
+|===
+
+Do not overwrite Settings directly, use mock instead.
+
+=== Examples
+
+[source,ruby]
+----
+# bad
+Settings.foo = 'bar'
+Settings[:foo] = 'bar'
+Settings.foo[:bar] = 'baz'
+Settings.foo += 'bar'
+Settings.foo << 'bar'
+
+# good
+allow(Settings).to receive(:foo).and_return('bar')
+allow(Settings).to receive(:[]).with(:foo).and_return('bar')
+allow(Settings.foo).to receive(:[]).with(:bar).and_return('baz')
+allow(Settings).to receive(:foo).and_return(Settings.foo + "bar")
+----
+
+=== References
+
+* https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/SettingsOverwritten
+
 == RSpecRails/TravelAround
 
 |===
