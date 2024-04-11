@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+## 2.28.3 (2024-04-11)
+
 - Fix an error for Ambiguous cop name `RSpec/Rails/HttpStatus`. ([@ydah])
 
 ## 2.28.2 (2024-03-31)
