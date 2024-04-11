@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+- Fix an error for Ambiguous cop name `RSpec/Rails/HttpStatus`. ([@ydah])
+
 ## 2.28.2 (2024-03-31)
 
 - Fix a `NameError` by Cross-Referencing. ([@ydah])
