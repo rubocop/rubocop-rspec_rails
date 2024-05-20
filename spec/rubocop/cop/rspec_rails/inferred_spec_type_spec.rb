@@ -11,7 +11,7 @@ RSpec.describe RuboCop::Cop::RSpecRails::InferredSpecType do
   end
 
   describe 'with redundant type in keyword arguments' do
-    it 'register and corrects an offense' do
+    it 'registers and corrects an offense' do
       expect_offense(<<~RUBY, '/path/to/project/spec/models/user_spec.rb')
         RSpec.describe User, type: :model do
                              ^^^^^^^^^^^^ Remove redundant spec type.
@@ -26,7 +26,7 @@ RSpec.describe RuboCop::Cop::RSpecRails::InferredSpecType do
   end
 
   describe 'with redundant type in Hash arguments' do
-    it 'register and corrects an offense' do
+    it 'registers and corrects an offense' do
       expect_offense(<<~RUBY, '/path/to/project/spec/models/user_spec.rb')
         RSpec.describe User, { type: :model } do
                              ^^^^^^^^^^^^^^^^ Remove redundant spec type.
@@ -41,7 +41,7 @@ RSpec.describe RuboCop::Cop::RSpecRails::InferredSpecType do
   end
 
   describe 'with redundant type before other Hash metadata' do
-    it 'register and corrects an offense' do
+    it 'registers and corrects an offense' do
       expect_offense(<<~RUBY, '/path/to/project/spec/models/user_spec.rb')
         RSpec.describe User, type: :model, other: true do
                              ^^^^^^^^^^^^ Remove redundant spec type.
@@ -56,7 +56,7 @@ RSpec.describe RuboCop::Cop::RSpecRails::InferredSpecType do
   end
 
   describe 'with redundant type after other Hash metadata' do
-    it 'register and corrects an offense' do
+    it 'registers and corrects an offense' do
       expect_offense(<<~RUBY, '/path/to/project/spec/models/user_spec.rb')
         RSpec.describe User, other: true, type: :model do
                                           ^^^^^^^^^^^^ Remove redundant spec type.
@@ -71,7 +71,7 @@ RSpec.describe RuboCop::Cop::RSpecRails::InferredSpecType do
   end
 
   describe 'with redundant type and other Symbol metadata' do
-    it 'register and corrects an offense' do
+    it 'registers and corrects an offense' do
       expect_offense(<<~RUBY, '/path/to/project/spec/models/user_spec.rb')
         RSpec.describe User, :other, type: :model do
                                      ^^^^^^^^^^^^ Remove redundant spec type.
@@ -86,7 +86,7 @@ RSpec.describe RuboCop::Cop::RSpecRails::InferredSpecType do
   end
 
   describe 'with redundant type and receiver-less describe' do
-    it 'register and corrects an offense' do
+    it 'registers and corrects an offense' do
       expect_offense(<<~RUBY, '/path/to/project/spec/models/user_spec.rb')
         describe User, type: :model do
                        ^^^^^^^^^^^^ Remove redundant spec type.
@@ -101,7 +101,7 @@ RSpec.describe RuboCop::Cop::RSpecRails::InferredSpecType do
   end
 
   describe 'with redundant type in inner example group' do
-    it 'register and corrects an offense' do
+    it 'registers and corrects an offense' do
       expect_offense(<<~RUBY, '/path/to/project/spec/models/user_spec.rb')
         RSpec.describe User do
           describe 'inner', type: :model do
@@ -128,7 +128,7 @@ RSpec.describe RuboCop::Cop::RSpecRails::InferredSpecType do
       }
     end
 
-    it 'register and corrects an offense' do
+    it 'registers and corrects an offense' do
       expect_offense(<<~RUBY, '/path/to/project/spec/services/user_spec.rb')
         RSpec.describe User, type: :service do
                              ^^^^^^^^^^^^^^ Remove redundant spec type.
