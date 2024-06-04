@@ -321,9 +321,9 @@ expect(a).to be(false)
 
 | Pending
 | No
-| Always (Unsafe)
+| Command-line only (Unsafe)
 | 2.23
-| -
+| <<next>>
 |===
 
 Enforces use of `be_invalid` or `not_to` for negated be_valid.
