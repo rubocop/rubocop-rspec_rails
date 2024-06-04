@@ -66,6 +66,7 @@ RSpecRails/MinitestAssertions:
 
 RSpecRails/NegationBeValid:
   Description: Enforces use of `be_invalid` or `not_to` for negated be_valid.
+  AutoCorrect: contextual
   Safe: false
   EnforcedStyle: not_to
   SupportedStyles:
@@ -73,6 +74,7 @@ RSpecRails/NegationBeValid:
     - be_invalid
   Enabled: pending
   VersionAdded: '2.23'
+  VersionChanged: "<<next>>"
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/NegationBeValid
 
 RSpecRails/TravelAround:
