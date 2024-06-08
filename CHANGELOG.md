@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+## 2.29.0 (2024-06-08)
+
 - Support `AutoCorrect: contextual` option for LSP. ([@ydah])
 
 ## 2.28.3 (2024-04-11)
