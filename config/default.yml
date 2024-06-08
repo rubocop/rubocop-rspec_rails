@@ -74,7 +74,7 @@ RSpecRails/NegationBeValid:
     - be_invalid
   Enabled: pending
   VersionAdded: '2.23'
-  VersionChanged: "<<next>>"
+  VersionChanged: '2.29'
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/NegationBeValid
 
 RSpecRails/TravelAround:
