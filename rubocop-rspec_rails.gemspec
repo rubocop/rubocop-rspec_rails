@@ -35,4 +35,5 @@ Gem::Specification.new do |spec|
   }
 
   spec.add_runtime_dependency 'rubocop', '~> 1.61'
+  spec.add_runtime_dependency 'rubocop-rspec', '~> 3', '>= 3.0.1'
 end
