@@ -2,6 +2,10 @@
 
 ## Master (Unreleased)
 
+## 2.30.0 (2024-06-12)
+
+- Fix an runtime error for rubocop-rspec +3.0. ([@bquorning])
+
 ## 2.29.1 (2024-06-12)
 
 - Bump RuboCop requirement to +1.61. ([@ydah])
