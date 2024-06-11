@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+## 2.29.1 (2024-06-12)
+
 - Bump RuboCop requirement to +1.61. ([@ydah])
 
 ## 2.29.0 (2024-06-08)
