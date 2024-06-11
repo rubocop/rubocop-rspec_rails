@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+- Bump RuboCop requirement to +1.61. ([@ydah])
+
 ## 2.29.0 (2024-06-08)
 
 - Support `AutoCorrect: contextual` option for LSP. ([@ydah])
