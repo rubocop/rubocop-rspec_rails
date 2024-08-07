@@ -118,63 +118,48 @@ RSpec.describe RuboCop::Cop::RSpecRails::Timecop, :config do
     end
   end
 
-  shared_examples 'return prefers' do |replacement|
+  shared_examples 'return prefers' do
     context 'when given no block' do
-      it "flags, and corrects to `#{replacement}`" do
+      it 'flags, and corrects to `travel_back`' do
         expect_offense(<<~RUBY)
           Timecop.return
-          ^^^^^^^^^^^^^^ Use `#{replacement}` instead of `Timecop.return`
+          ^^^^^^^^^^^^^^ Use `travel_back` instead of `Timecop.return`
         RUBY
 
         expect_correction(<<~RUBY)
-          #{replacement}
+          travel_back
         RUBY
-      end
-
-      context 'when inside a block' do
-        it "flags, and corrects to `#{replacement}`" do
-          expect_offense(<<~RUBY)
-            foo { Timecop.return }
-                  ^^^^^^^^^^^^^^ Use `#{replacement}` instead of `Timecop.return`
-          RUBY
-
-          expect_correction(<<~RUBY)
-            foo { #{replacement} }
-          RUBY
-        end
-      end
-    end
-
-    context 'when given a block' do
-      it 'flags, and does not correct' do
-        expect_offense(<<~RUBY)
-          Timecop.return { assert true }
-          ^^^^^^^^^^^^^^ Use `#{replacement}` instead of `Timecop.return`
-        RUBY
-
-        expect_no_corrections
-      end
-
-      context 'when inside a block' do
-        it 'flags, and does not correct' do
-          expect_offense(<<~RUBY)
-            foo { Timecop.return { assert true } }
-                  ^^^^^^^^^^^^^^ Use `#{replacement}` instead of `Timecop.return`
-          RUBY
-
-          expect_no_corrections
-        end
       end
     end
   end
 
   describe '.return' do
-    context 'when Rails < 6.0', :rails52 do
-      include_examples 'return prefers', 'travel_back'
+    context 'with Rails < 6.1', :rails60 do
+      include_examples 'return prefers'
+
+      it 'flags, but does not correct return with a block' do
+        expect_offense(<<~RUBY)
+          Timecop.return { assert true }
+          ^^^^^^^^^^^^^^ Use `travel_back` instead of `Timecop.return`
+        RUBY
+
+        expect_no_corrections
+      end
     end
 
-    context 'with Rails 6.0+', :rails60 do
-      include_examples 'return prefers', 'unfreeze_time'
+    context 'with Rails 6.1+', :rails61 do
+      include_examples 'return prefers'
+
+      it 'flags, and corrects return with a block' do
+        expect_offense(<<~RUBY)
+          Timecop.return { assert true }
+          ^^^^^^^^^^^^^^ Use `travel_back` instead of `Timecop.return`
+        RUBY
+
+        expect_correction(<<~RUBY)
+          travel_back { assert true }
+        RUBY
+      end
     end
   end
 
