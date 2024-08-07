@@ -28,6 +28,7 @@
 - Handle unknown HTTP status codes for `RSpecRails/HttpStatus` cop. ([@viralpraxis])
 - Fix a false negative for `RSpecRails/TravelAround` cop when passed as a proc to a travel method. ([@ydah])
 - Make RuboCop RSpecRails work as a RuboCop plugin. ([@bquorning])
+- Add a cop that makes `Timecop` illegal, in favour of `ActiveSupport::Testing::TimeHelpers`. ([@sambostock])
 
 ## 2.30.0 (2024-06-12)
 
@@ -110,6 +111,7 @@
 [@paydaylight]: https://github.com/paydaylight
 [@pirj]: https://github.com/pirj
 [@r7kamura]: https://github.com/r7kamura
+[@sambostock]: https://github.com/sambostock
 [@splattael]: https://github.com/splattael
 [@taketo1113]: https://github.com/taketo1113
 [@tmaier]: https://github.com/tmaier

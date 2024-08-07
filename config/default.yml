@@ -90,6 +90,12 @@ RSpecRails/NegationBeValid:
   VersionChanged: '2.29'
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/NegationBeValid
 
+RSpecRails/Timecop:
+  Description: Enforces use of `ActiveSupport::Testing::TimeHelpers` instead of `Timecop`.
+  Enabled: pending
+  VersionAdded: "<<next>>"
+  SafeAutoCorrect: false
+  Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/Timecop
 RSpecRails/ReceivePerformLater:
   Description: Prefer `have_enqueued_job` over `receive(:perform_later)`.
   Enabled: pending

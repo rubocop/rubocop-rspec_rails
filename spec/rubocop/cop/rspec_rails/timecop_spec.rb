@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe RuboCop::Cop::Rails::Timecop, :config do
+RSpec.describe RuboCop::Cop::RSpecRails::Timecop, :config do
   shared_examples 'adds an offense to constant, and does not correct' do |usage:|
     constant = usage.include?('::Timecop') ? '::Timecop' : 'Timecop'
 
