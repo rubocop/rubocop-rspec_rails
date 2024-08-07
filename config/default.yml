@@ -78,7 +78,7 @@ RSpecRails/NegationBeValid:
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/NegationBeValid
 
 RSpecRails/Timecop:
-  Description: Enforces use of `ActiveSupport::Testing::TimeHelpers` instead of `Timecop`.
+  Description: Enforces use of ActiveSupport TimeHelpers instead of Timecop.
   Enabled: pending
   VersionAdded: "<<next>>"
   SafeAutoCorrect: false
