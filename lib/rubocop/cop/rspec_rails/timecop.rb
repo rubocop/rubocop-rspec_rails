@@ -3,7 +3,7 @@
 module RuboCop
   module Cop
     module RSpecRails
-      # Enforces use of `ActiveSupport::Testing::TimeHelpers` instead of `Timecop`.
+      # Enforces use of ActiveSupport TimeHelpers instead of Timecop.
       #
       # ## Migration
       # `Timecop.freeze` should be replaced with `freeze_time` when used
@@ -96,17 +96,25 @@ module RuboCop
         extend AutoCorrector
 
         FREEZE_MESSAGE = 'Use `%<replacement>s` instead of `Timecop.freeze`'
-        FREEZE_WITH_ARGUMENTS_MESSAGE = 'Use `travel` or `travel_to` instead of `Timecop.freeze`'
+        FREEZE_WITH_ARGUMENTS_MESSAGE =
+          'Use `travel` or `travel_to` instead of `Timecop.freeze`'
         RETURN_MESSAGE = 'Use `%<replacement>s` instead of `Timecop.return`'
-        FLOW_ADDENDUM = 'If you need time to keep flowing, simulate it by travelling again.'
-        TRAVEL_MESSAGE = "Use `travel` or `travel_to` instead of `Timecop.travel`. #{FLOW_ADDENDUM}"
-        SCALE_MESSAGE = "Use `travel` or `travel_to` instead of `Timecop.scale`. #{FLOW_ADDENDUM}"
+        FLOW_ADDENDUM =
+          'If you need time to keep flowing, simulate it by travelling again.'
+        TRAVEL_MESSAGE =
+          'Use `travel` or `travel_to` instead of `Timecop.travel`. ' \
+          "#{FLOW_ADDENDUM}"
+        SCALE_MESSAGE =
+          'Use `travel` or `travel_to` instead of `Timecop.scale`. ' \
+          "#{FLOW_ADDENDUM}"
         MSG = 'Use `ActiveSupport::Testing::TimeHelpers` instead of `Timecop`'
 
+        # @!method timecop_const?(node)
         def_node_matcher :timecop_const?, <<~PATTERN
           (const {nil? cbase} :Timecop)
         PATTERN
 
+        # @!method timecop_send(node)
         def_node_matcher :timecop_send, <<~PATTERN
           (send
             #timecop_const? ${:freeze :return :scale :travel}
@@ -138,7 +146,9 @@ module RuboCop
 
         def on_timecop_freeze(node, arguments)
           if arguments.empty?
-            add_offense(node, message: format(FREEZE_MESSAGE, replacement: preferred_freeze_replacement)) do |corrector|
+            message =
+              format(FREEZE_MESSAGE, replacement: preferred_freeze_replacement)
+            add_offense(node, message: message) do |corrector|
               autocorrect_freeze(corrector, node, arguments)
             end
           else
@@ -147,7 +157,9 @@ module RuboCop
         end
 
         def on_timecop_return(node, arguments)
-          add_offense(node, message: format(RETURN_MESSAGE, replacement: preferred_return_replacement)) do |corrector|
+          message =
+            format(RETURN_MESSAGE, replacement: preferred_return_replacement)
+          add_offense(node, message: message) do |corrector|
             autocorrect_return(corrector, node, arguments)
           end
         end
@@ -163,17 +175,19 @@ module RuboCop
         def autocorrect_freeze(corrector, node, arguments)
           return unless arguments.empty?
 
-          corrector.replace(receiver_and_message_range(node), preferred_freeze_replacement)
+          corrector.replace(receiver_and_message_range(node),
+                            preferred_freeze_replacement)
         end
 
         def autocorrect_return(corrector, node, _arguments)
           return if given_block?(node)
 
-          corrector.replace(receiver_and_message_range(node), preferred_return_replacement)
+          corrector.replace(receiver_and_message_range(node),
+                            preferred_return_replacement)
         end
 
         def given_block?(node)
-          node.send_type? && node.parent && node.parent.block_type? && node.parent.send_node == node
+          node.parent&.block_type? && node.parent.send_node == node
         end
 
         def receiver_and_message_range(node)

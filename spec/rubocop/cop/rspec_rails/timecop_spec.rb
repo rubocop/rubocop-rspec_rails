@@ -1,10 +1,28 @@
 # frozen_string_literal: true
 
 RSpec.describe RuboCop::Cop::RSpecRails::Timecop, :config do
-  shared_examples 'adds an offense to constant, and does not correct' do |usage:|
+  shared_context 'with Rails 5.1', :rails51 do
+    let(:rails_version) { 5.1 }
+  end
+
+  shared_context 'with Rails 5.2', :rails52 do
+    let(:rails_version) { 5.2 }
+  end
+
+  shared_context 'with Rails 6.0', :rails60 do
+    let(:rails_version) { 6.0 }
+  end
+
+  shared_context 'with Rails 7.0', :rails70 do
+    let(:rails_version) { 7.0 }
+  end
+
+  include_context 'with Rails 7.0'
+
+  shared_examples 'flags to constant, and does not correct' do |usage:|
     constant = usage.include?('::Timecop') ? '::Timecop' : 'Timecop'
 
-    it 'adds an offense, and does not correct' do
+    it 'flags, and does not correct' do
       expect_offense(<<~RUBY, constant: constant)
         #{usage}
         ^{constant} Use `ActiveSupport::Testing::TimeHelpers` instead of `Timecop`
@@ -14,158 +32,167 @@ RSpec.describe RuboCop::Cop::RSpecRails::Timecop, :config do
     end
   end
 
-  describe 'Timecop' do
-    include_examples 'adds an offense to constant, and does not correct', usage: 'Timecop'
+  include_examples 'flags to constant, and does not correct',
+                   usage: 'Timecop'
 
-    describe '.*' do
-      include_examples 'adds an offense to constant, and does not correct', usage: 'Timecop.foo'
-    end
+  describe '.*' do
+    include_examples 'flags to constant, and does not correct',
+                     usage: 'Timecop.foo'
+  end
 
-    shared_examples 'adds an offense to send, and does not correct' do |usage:, include_time_flow_addendum: false|
-      usage_without_arguments = usage.sub(/\(.*\)$/, '')
-      addendum =
-        include_time_flow_addendum ? '. If you need time to keep flowing, simulate it by travelling again.' : ''
-
-      context 'given no block' do
-        it 'adds an offense, and does not correct' do
-          expect_offense(<<~RUBY, usage: usage)
-            #{usage}
-            ^{usage} Use `travel` or `travel_to` instead of `#{usage_without_arguments}`#{addendum}
-          RUBY
-
-          expect_no_corrections
-        end
+  shared_examples 'flags send, and does not correct' do |usage:,
+                                                         flow_addendum: false|
+    usage_without_arguments = usage.sub(/\(.*\)$/, '')
+    addendum =
+      if flow_addendum
+        '. If you need time to keep flowing, simulate it by travelling again.'
+      else
+        ''
       end
 
-      context 'given a block' do
-        it 'adds an offense, and does not correct' do
-          expect_offense(<<~RUBY, usage: usage)
-            #{usage} { assert true }
-            ^{usage} Use `travel` or `travel_to` instead of `#{usage_without_arguments}`#{addendum}
-          RUBY
+    context 'when given no block' do
+      it 'flags, and does not correct' do
+        expect_offense(<<~RUBY, usage: usage)
+          #{usage}
+          ^{usage} Use `travel` or `travel_to` instead of `#{usage_without_arguments}`#{addendum}
+        RUBY
 
-          expect_no_corrections
-        end
+        expect_no_corrections
       end
     end
 
-    describe '.freeze' do
-      context 'without arguments' do
-        shared_examples 'adds an offense and corrects to' do |replacement:|
-          context 'given no block' do
-            it "adds an offense, and corrects to `#{replacement}`" do
-              expect_offense(<<~RUBY)
-                Timecop.freeze
-                ^^^^^^^^^^^^^^ Use `#{replacement}` instead of `Timecop.freeze`
-              RUBY
+    context 'when given a block' do
+      it 'flags, and does not correct' do
+        expect_offense(<<~RUBY, usage: usage)
+          #{usage} { assert true }
+          ^{usage} Use `travel` or `travel_to` instead of `#{usage_without_arguments}`#{addendum}
+        RUBY
 
-              expect_correction(<<~RUBY)
-                #{replacement}
-              RUBY
-            end
-          end
-
-          context 'given a block' do
-            it "adds an offense, and corrects to `#{replacement}`" do
-              expect_offense(<<~RUBY)
-                Timecop.freeze { assert true }
-                ^^^^^^^^^^^^^^ Use `#{replacement}` instead of `Timecop.freeze`
-              RUBY
-
-              expect_correction(<<~RUBY)
-                #{replacement} { assert true }
-              RUBY
-            end
-          end
-        end
-
-        context 'prior to Rails 5.2', :rails51 do
-          include_examples 'adds an offense and corrects to', replacement: 'travel_to(Time.now)'
-        end
-
-        context 'since Rails 5.2', :rails52 do
-          include_examples 'adds an offense and corrects to', replacement: 'freeze_time'
-        end
+        expect_no_corrections
       end
-
-      context 'with arguments' do
-        include_examples 'adds an offense to send, and does not correct', usage: 'Timecop.freeze(*time_args)'
-      end
-    end
-
-    describe '.return' do
-      shared_examples 'prefers' do |replacement|
-        context 'given no block' do
-          it "adds an offense, and corrects to `#{replacement}`" do
-            expect_offense(<<~RUBY)
-              Timecop.return
-              ^^^^^^^^^^^^^^ Use `#{replacement}` instead of `Timecop.return`
-            RUBY
-
-            expect_correction(<<~RUBY)
-              #{replacement}
-            RUBY
-          end
-
-          context 'inside a block' do
-            it "adds an offense, and corrects to `#{replacement}`" do
-              expect_offense(<<~RUBY)
-                foo { Timecop.return }
-                      ^^^^^^^^^^^^^^ Use `#{replacement}` instead of `Timecop.return`
-              RUBY
-
-              expect_correction(<<~RUBY)
-                foo { #{replacement} }
-              RUBY
-            end
-          end
-        end
-
-        context 'given a block' do
-          it 'adds an offense, and does not correct' do
-            expect_offense(<<~RUBY)
-              Timecop.return { assert true }
-              ^^^^^^^^^^^^^^ Use `#{replacement}` instead of `Timecop.return`
-            RUBY
-
-            expect_no_corrections
-          end
-
-          context 'inside a block' do
-            it 'adds an offense, and does not correct' do
-              expect_offense(<<~RUBY)
-                foo { Timecop.return { assert true } }
-                      ^^^^^^^^^^^^^^ Use `#{replacement}` instead of `Timecop.return`
-              RUBY
-
-              expect_no_corrections
-            end
-          end
-        end
-      end
-
-      context 'prior to Rails < 6.0', :rails52 do
-        include_examples 'prefers', 'travel_back'
-      end
-
-      context 'since Rails 6.0', :rails60 do
-        include_examples 'prefers', 'unfreeze_time'
-      end
-    end
-
-    describe '.scale' do
-      include_examples 'adds an offense to send, and does not correct', usage: 'Timecop.scale(factor)',
-                                                                        include_time_flow_addendum: true
-    end
-
-    describe '.travel' do
-      include_examples 'adds an offense to send, and does not correct', usage: 'Timecop.travel(*time_args)',
-                                                                        include_time_flow_addendum: true
     end
   end
 
+  describe '.freeze' do
+    shared_examples 'flags and corrects to' do |replacement:|
+      context 'when given no block' do
+        it "flags, and corrects to `#{replacement}`" do
+          expect_offense(<<~RUBY)
+            Timecop.freeze
+            ^^^^^^^^^^^^^^ Use `#{replacement}` instead of `Timecop.freeze`
+          RUBY
+
+          expect_correction(<<~RUBY)
+            #{replacement}
+          RUBY
+        end
+      end
+
+      context 'when given a block' do
+        it "flags, and corrects to `#{replacement}`" do
+          expect_offense(<<~RUBY)
+            Timecop.freeze { assert true }
+            ^^^^^^^^^^^^^^ Use `#{replacement}` instead of `Timecop.freeze`
+          RUBY
+
+          expect_correction(<<~RUBY)
+            #{replacement} { assert true }
+          RUBY
+        end
+      end
+    end
+
+    context 'when Rails < 5.2', :rails51 do
+      include_examples 'flags and corrects to',
+                       replacement: 'travel_to(Time.now)'
+    end
+
+    context 'with Rails 5.2+', :rails52 do
+      include_examples 'flags and corrects to',
+                       replacement: 'freeze_time'
+    end
+
+    context 'with arguments' do
+      include_examples 'flags send, and does not correct',
+                       usage: 'Timecop.freeze(*time_args)'
+    end
+  end
+
+  shared_examples 'return prefers' do |replacement|
+    context 'when given no block' do
+      it "flags, and corrects to `#{replacement}`" do
+        expect_offense(<<~RUBY)
+          Timecop.return
+          ^^^^^^^^^^^^^^ Use `#{replacement}` instead of `Timecop.return`
+        RUBY
+
+        expect_correction(<<~RUBY)
+          #{replacement}
+        RUBY
+      end
+
+      context 'when inside a block' do
+        it "flags, and corrects to `#{replacement}`" do
+          expect_offense(<<~RUBY)
+            foo { Timecop.return }
+                  ^^^^^^^^^^^^^^ Use `#{replacement}` instead of `Timecop.return`
+          RUBY
+
+          expect_correction(<<~RUBY)
+            foo { #{replacement} }
+          RUBY
+        end
+      end
+    end
+
+    context 'when given a block' do
+      it 'flags, and does not correct' do
+        expect_offense(<<~RUBY)
+          Timecop.return { assert true }
+          ^^^^^^^^^^^^^^ Use `#{replacement}` instead of `Timecop.return`
+        RUBY
+
+        expect_no_corrections
+      end
+
+      context 'when inside a block' do
+        it 'flags, and does not correct' do
+          expect_offense(<<~RUBY)
+            foo { Timecop.return { assert true } }
+                  ^^^^^^^^^^^^^^ Use `#{replacement}` instead of `Timecop.return`
+          RUBY
+
+          expect_no_corrections
+        end
+      end
+    end
+  end
+
+  describe '.return' do
+    context 'when Rails < 6.0', :rails52 do
+      include_examples 'return prefers', 'travel_back'
+    end
+
+    context 'with Rails 6.0+', :rails60 do
+      include_examples 'return prefers', 'unfreeze_time'
+    end
+  end
+
+  describe '.scale' do
+    include_examples 'flags send, and does not correct',
+                     usage: 'Timecop.scale(factor)',
+                     flow_addendum: true
+  end
+
+  describe '.travel' do
+    include_examples 'flags send, and does not correct',
+                     usage: 'Timecop.travel(*time_args)',
+                     flow_addendum: true
+  end
+
   describe '::Timecop' do
-    include_examples 'adds an offense to constant, and does not correct', usage: '::Timecop'
+    include_examples 'flags to constant, and does not correct',
+                     usage: '::Timecop'
   end
 
   describe 'Foo::Timecop' do
