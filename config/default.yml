@@ -89,7 +89,6 @@ RSpecRails/NegationBeValid:
   VersionAdded: '2.23'
   VersionChanged: '2.29'
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/NegationBeValid
-
 RSpecRails/Timecop:
   Description: Enforces use of ActiveSupport TimeHelpers instead of Timecop.
   Enabled: pending
@@ -101,7 +100,6 @@ RSpecRails/ReceivePerformLater:
   Enabled: pending
   VersionAdded: '2.33'
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/ReceivePerformLater
-
 RSpecRails/TravelAround:
   Description: Checks for time travel helpers in `around` hooks.
   Enabled: pending
