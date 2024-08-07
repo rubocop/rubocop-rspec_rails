@@ -16,10 +16,10 @@ module RuboCop
       # rather than relying on allowing time to continue to flow.
       #
       # `Timecop.return` should be replaced with `travel_back`, when used
-      # without a block. `travel_back` does not accept a block, so where
-      # `return` is used with a block, it should be replaced by explicitly
-      # calling `freeze_time` with a block, and passing the `time` to
-      # temporarily return to.
+      # without a block. `travel_back` accepts a block starting with Rails 6.1.
+      # For earlier Rails, where `return` is used with a block, it should
+      # be replaced by explicitly calling `freeze_time` with a block, and
+      # passing the `time` to temporarily return to.
       #
       # `Timecop.travel` should be replaced by `travel` or `travel_to` when
       # passed a `duration` or `time`, respectively. As with `Timecop.scale`,
@@ -81,7 +81,7 @@ module RuboCop
       #
       #   # good
       #   travel_back
-      #   travel_to(time) { assert true }
+      #   travel_back { assert true }
       #
       #   # bad
       #   Timecop.scale(factor)
@@ -158,7 +158,7 @@ module RuboCop
 
         def on_timecop_return(node, arguments)
           message =
-            format(RETURN_MESSAGE, replacement: preferred_return_replacement)
+            format(RETURN_MESSAGE, replacement: 'travel_back')
           add_offense(node, message: message) do |corrector|
             autocorrect_return(corrector, node, arguments)
           end
@@ -180,14 +180,18 @@ module RuboCop
         end
 
         def autocorrect_return(corrector, node, _arguments)
-          return if given_block?(node)
+          return if given_block?(node) && !supports_return_with_block?
 
-          corrector.replace(receiver_and_message_range(node),
-                            preferred_return_replacement)
+          corrector.replace(receiver_and_message_range(node), 'travel_back')
         end
 
         def given_block?(node)
           node.parent&.block_type? && node.parent.send_node == node
+        end
+
+        # travel_back { ... } was introduced in Rails 6.1
+        def supports_return_with_block?
+          target_rails_version >= 6.1
         end
 
         def receiver_and_message_range(node)
@@ -198,12 +202,6 @@ module RuboCop
           return 'travel_to(Time.now)' if target_rails_version < 5.2
 
           'freeze_time'
-        end
-
-        def preferred_return_replacement
-          return 'travel_back' if target_rails_version < 6.0
-
-          'unfreeze_time'
         end
       end
     end
