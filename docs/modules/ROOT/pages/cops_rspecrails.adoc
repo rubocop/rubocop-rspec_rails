@@ -377,6 +377,116 @@ expect(foo).to be_invalid.or be_even
 
 * https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/NegationBeValid
 
+== RSpecRails/Timecop
+
+|===
+| Enabled by default | Safe | Supports autocorrection | Version Added | Version Changed
+
+| Pending
+| Yes
+| Always (Unsafe)
+| <<next>>
+| -
+|===
+
+Enforces use of ActiveSupport TimeHelpers instead of Timecop.
+
+## Migration
+`Timecop.freeze` should be replaced with `freeze_time` when used
+without arguments. Where a `duration` has been passed to `freeze`, it
+should be replaced with `travel`. Likewise, where a `time` has been
+passed to `freeze`, it should be replaced with `travel_to`.
+
+`Timecop.scale` should be replaced by explicitly calling `travel` or
+`travel_to` with the expected `durations` or `times`, respectively,
+rather than relying on allowing time to continue to flow.
+
+`Timecop.return` should be replaced with `travel_back`, when used
+without a block. `travel_back` accepts a block starting with Rails 6.1.
+For earlier Rails, where `return` is used with a block, it should
+be replaced by explicitly calling `freeze_time` with a block, and
+passing the `time` to temporarily return to.
+
+`Timecop.travel` should be replaced by `travel` or `travel_to` when
+passed a `duration` or `time`, respectively. As with `Timecop.scale`,
+rather than relying on time continuing to flow, it should be travelled
+to explicitly.
+
+All other usages of `Timecop` are similarly disallowed.
+
+## RSpec Caveats
+
+Note that if using RSpec, `TimeHelpers` are not included by default,
+and must be manually included by updating `rails_helper` accordingly:
+
+```ruby
+RSpec.configure do |config|
+  config.include ActiveSupport::Testing::TimeHelpers
+end
+```
+
+Moreover, because `TimeHelpers` relies on Minitest teardown hooks,
+`rails_helper` must be required (instead of `spec_helper`), or a
+similar adapter layer must be in effect.
+
+=== Examples
+
+[source,ruby]
+----
+# bad
+Timecop
+
+# bad
+Timecop.freeze
+Timecop.freeze(duration)
+Timecop.freeze(time)
+
+# good
+freeze_time
+travel(duration)
+travel_to(time)
+
+# bad
+Timecop.freeze { assert true }
+Timecop.freeze(duration) { assert true }
+Timecop.freeze(time) { assert true }
+
+# good
+freeze_time { assert true }
+travel(duration) { assert true }
+travel_to(time) { assert true }
+
+# bad
+Timecop.travel(duration)
+Timecop.travel(time)
+
+# good
+travel(duration)
+travel_to(time)
+
+# bad
+Timecop.return
+Timecop.return { assert true }
+
+# good
+travel_back
+travel_back { assert true }
+
+# bad
+Timecop.scale(factor)
+Timecop.scale(factor) { assert true }
+
+# good
+travel(duration)
+travel_to(time)
+travel(duration) { assert true }
+travel_to(time) { assert true }
+----
+
+=== References
+
+* https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/Timecop
+
 == RSpecRails/TravelAround
 
 |===
