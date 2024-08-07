@@ -2,9 +2,8 @@
 
 module RuboCop
   module Cop
-    module Rails
-      # Disallows all usage of `Timecop`, in favour of
-      # `ActiveSupport::Testing::TimeHelpers`.
+    module RSpecRails
+      # Enforces use of `ActiveSupport::Testing::TimeHelpers` instead of `Timecop`.
       #
       # ## Migration
       # `Timecop.freeze` should be replaced with `freeze_time` when used
@@ -93,7 +92,7 @@ module RuboCop
       #   travel_to(time)
       #   travel(duration) { assert true }
       #   travel_to(time) { assert true }
-      class Timecop < Base
+      class Timecop < ::RuboCop::Cop::Base
         extend AutoCorrector
 
         FREEZE_MESSAGE = 'Use `%<replacement>s` instead of `Timecop.freeze`'

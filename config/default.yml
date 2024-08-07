@@ -77,6 +77,13 @@ RSpecRails/NegationBeValid:
   VersionChanged: '2.29'
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/NegationBeValid
 
+RSpecRails/Timecop:
+  Description: Enforces use of `ActiveSupport::Testing::TimeHelpers` instead of `Timecop`.
+  Enabled: pending
+  VersionAdded: "<<next>>"
+  SafeAutoCorrect: false
+  Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/Timecop
+
 RSpecRails/TravelAround:
   Description: Prefer to travel in `before` rather than `around`.
   Enabled: pending
