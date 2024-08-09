@@ -1,19 +1,23 @@
 # frozen_string_literal: true
 
 RSpec.describe RuboCop::Cop::RSpecRails::Timecop, :config do
-  shared_context 'with Rails 5.1', :rails51 do
+  shared_context 'with Rails 5.1' do
     let(:rails_version) { 5.1 }
   end
 
-  shared_context 'with Rails 5.2', :rails52 do
+  shared_context 'with Rails 5.2' do
     let(:rails_version) { 5.2 }
   end
 
-  shared_context 'with Rails 6.0', :rails60 do
+  shared_context 'with Rails 6.0' do
     let(:rails_version) { 6.0 }
   end
 
-  shared_context 'with Rails 7.0', :rails70 do
+  shared_context 'with Rails 6.1' do
+    let(:rails_version) { 6.1 }
+  end
+
+  shared_context 'with Rails 7.0' do
     let(:rails_version) { 7.0 }
   end
 
@@ -102,12 +106,14 @@ RSpec.describe RuboCop::Cop::RSpecRails::Timecop, :config do
       end
     end
 
-    context 'when Rails < 5.2', :rails51 do
+    context 'when Rails < 5.2' do
+      include_context 'with Rails 5.1'
       include_examples 'flags and corrects to',
                        replacement: 'travel_to(Time.now)'
     end
 
-    context 'with Rails 5.2+', :rails52 do
+    context 'with Rails 5.2+' do
+      include_context 'with Rails 5.2'
       include_examples 'flags and corrects to',
                        replacement: 'freeze_time'
     end
@@ -134,7 +140,8 @@ RSpec.describe RuboCop::Cop::RSpecRails::Timecop, :config do
   end
 
   describe '.return' do
-    context 'with Rails < 6.1', :rails60 do
+    context 'with Rails < 6.1' do
+      include_context 'with Rails 6.0'
       include_examples 'return prefers'
 
       it 'flags, but does not correct return with a block' do
@@ -147,7 +154,8 @@ RSpec.describe RuboCop::Cop::RSpecRails::Timecop, :config do
       end
     end
 
-    context 'with Rails 6.1+', :rails61 do
+    context 'with Rails 6.1+' do
+      include_context 'with Rails 6.1'
       include_examples 'return prefers'
 
       it 'flags, and corrects return with a block' do
