@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+- Add a cop that makes `Timecop` illegal, in favour of `ActiveSupport::Testing::TimeHelpers`. ([@sambostock])
+
 ## 2.30.0 (2024-06-12)
 
 - Fix an runtime error for rubocop-rspec +3.0. ([@bquorning])
@@ -79,6 +81,7 @@
 [@paydaylight]: https://github.com/paydaylight
 [@pirj]: https://github.com/pirj
 [@r7kamura]: https://github.com/r7kamura
+[@sambostock]: https://github.com/sambostock
 [@splattael]: https://github.com/splattael
 [@tmaier]: https://github.com/tmaier
 [@ydah]: https://github.com/ydah
