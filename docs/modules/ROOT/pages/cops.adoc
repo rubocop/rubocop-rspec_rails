@@ -8,6 +8,7 @@
 * xref:cops_rspecrails.adoc#rspecrailsinferredspectype[RSpecRails/InferredSpecType]
 * xref:cops_rspecrails.adoc#rspecrailsminitestassertions[RSpecRails/MinitestAssertions]
 * xref:cops_rspecrails.adoc#rspecrailsnegationbevalid[RSpecRails/NegationBeValid]
+* xref:cops_rspecrails.adoc#rspecrailspendingonlyexamplegroup[RSpecRails/PendingOnlyExampleGroup]
 * xref:cops_rspecrails.adoc#rspecrailstravelaround[RSpecRails/TravelAround]
 
 // END_COP_LIST

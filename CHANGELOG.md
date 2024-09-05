@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+- Add `RSpecRails/PendingOnlyExampleGroup` cop. ([@r7kamura])
+
 ## 2.30.0 (2024-06-12)
 
 - Fix an runtime error for rubocop-rspec +3.0. ([@bquorning])
