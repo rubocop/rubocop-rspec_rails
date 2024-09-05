@@ -377,6 +377,34 @@ expect(foo).to be_invalid.or be_even
 
 * https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/NegationBeValid
 
+== RSpecRails/PendingOnlyExampleGroup
+
+|===
+| Enabled by default | Safe | Supports autocorrection | Version Added | Version Changed
+
+| Pending
+| Yes
+| No
+| <<next>>
+| -
+|===
+
+Remove pending-only test files.
+
+=== Examples
+
+[source,ruby]
+----
+# bad
+RSpec.describe Post do
+  pending "add some examples to (or delete) #{__FILE__}"
+end
+----
+
+=== References
+
+* https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/PendingOnlyExampleGroup
+
 == RSpecRails/TravelAround
 
 |===

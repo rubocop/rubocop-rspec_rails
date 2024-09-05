@@ -77,6 +77,12 @@ RSpecRails/NegationBeValid:
   VersionChanged: '2.29'
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/NegationBeValid
 
+RSpecRails/PendingOnlyExampleGroup:
+  Description: Remove pending-only test files.
+  Enabled: pending
+  VersionAdded: "<<next>>"
+  Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/PendingOnlyExampleGroup
+
 RSpecRails/TravelAround:
   Description: Prefer to travel in `before` rather than `around`.
   Enabled: pending
