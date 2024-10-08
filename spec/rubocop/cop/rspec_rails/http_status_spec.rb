@@ -80,6 +80,15 @@ RSpec.describe RuboCop::Cop::RSpecRails::HttpStatus do
         RUBY
       end
     end
+
+    it 'registers an offense for unknown status code' do
+      expect_offense(<<~RUBY)
+        it { is_expected.to have_http_status("some-custom-string") }
+                                             ^^^^^^^^^^^^^^^^^^^^ Unknown status code.
+      RUBY
+
+      expect_no_corrections
+    end
   end
 
   context 'when EnforcedStyle is `numeric`' do
@@ -131,6 +140,15 @@ RSpec.describe RuboCop::Cop::RSpecRails::HttpStatus do
         it { is_expected.to have_http_status :missing }
         it { is_expected.to have_http_status :redirect }
       RUBY
+    end
+
+    it 'registers an offense for unknown status code' do
+      expect_offense(<<~RUBY)
+        it { is_expected.to have_http_status("some-custom-string") }
+                                             ^^^^^^^^^^^^^^^^^^^^ Unknown status code.
+      RUBY
+
+      expect_no_corrections
     end
 
     context 'with parenthesis' do
@@ -235,6 +253,15 @@ RSpec.describe RuboCop::Cop::RSpecRails::HttpStatus do
         it { is_expected.to have_http_status :missing }
         it { is_expected.to have_http_status :redirect }
       RUBY
+    end
+
+    it 'registers an offense for unknown status code' do
+      expect_offense(<<~RUBY)
+        it { is_expected.to have_http_status("some-custom-string") }
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Unknown status code.
+      RUBY
+
+      expect_no_corrections
     end
 
     context 'with parenthesis' do

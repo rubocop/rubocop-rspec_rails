@@ -15,6 +15,7 @@ module RuboCop
       # So, this cop does not check if a method starting with `be_*` is used
       # when setting for `EnforcedStyle: symbolic` or
       # `EnforcedStyle: numeric`.
+      # This cop is also capable of detecting unknown HTTP status codes.
       #
       # @example `EnforcedStyle: symbolic` (default)
       #   # bad
@@ -57,6 +58,12 @@ module RuboCop
       #   it { is_expected.to have_http_status :success }
       #   it { is_expected.to have_http_status :error }
       #
+      # @example
+      #   # bad
+      #   it { is_expected.to have_http_status :oki_doki }
+      #
+      #   # good
+      #   it { is_expected.to have_http_status :ok }
       class HttpStatus < ::RuboCop::Cop::Base
         extend AutoCorrector
         include ConfigurableEnforcedStyle
@@ -67,7 +74,7 @@ module RuboCop
           (send nil? :have_http_status ${int sym str})
         PATTERN
 
-        def on_send(node)
+        def on_send(node) # rubocop:disable Metrics/MethodLength
           return unless defined?(::Rack::Utils::SYMBOL_TO_STATUS_CODE)
 
           http_status(node) do |arg|
@@ -78,6 +85,8 @@ module RuboCop
 
             add_offense(checker.offense_range,
                         message: checker.message) do |corrector|
+              next unless checker.autocorrectable?
+
               corrector.replace(checker.offense_range, checker.prefer)
             end
           end
@@ -100,6 +109,7 @@ module RuboCop
         class StyleCheckerBase
           MSG = 'Prefer `%<prefer>s` over `%<current>s` ' \
                 'to describe HTTP status code.'
+          MSG_UNKNOWN_STATUS_CODE = 'Unknown status code.'
           ALLOWED_STATUSES = %i[error success missing redirect].freeze
 
           attr_reader :node
@@ -109,7 +119,15 @@ module RuboCop
           end
 
           def message
-            format(MSG, prefer: prefer, current: current)
+            if autocorrectable?
+              format(MSG, prefer: prefer, current: current)
+            else
+              MSG_UNKNOWN_STATUS_CODE
+            end
+          end
+
+          def autocorrectable?
+            true
           end
 
           def current
@@ -136,6 +154,10 @@ module RuboCop
             !node.sym_type? && !custom_http_status_code?
           end
 
+          def autocorrectable?
+            !!symbol
+          end
+
           def prefer
             symbol.inspect
           end
@@ -155,6 +177,10 @@ module RuboCop
         class NumericStyleChecker < StyleCheckerBase
           def offensive?
             !node.int_type? && !allowed_symbol?
+          end
+
+          def autocorrectable?
+            !!number
           end
 
           def prefer
@@ -179,21 +205,29 @@ module RuboCop
               (!node.int_type? && !allowed_symbol?)
           end
 
+          def autocorrectable?
+            !!status_code
+          end
+
           def offense_range
             node.parent
           end
 
           def prefer
-            if node.sym_type?
-              "be_#{node.value}"
-            elsif node.int_type?
-              "be_#{symbol}"
-            elsif node.str_type?
-              "be_#{normalize_str}"
-            end
+            "be_#{status_code}"
           end
 
           private
+
+          def status_code
+            if node.sym_type?
+              node.value
+            elsif node.int_type?
+              symbol
+            else
+              normalize_str
+            end
+          end
 
           def symbol
             ::Rack::Utils::SYMBOL_TO_STATUS_CODE.key(number)
@@ -207,7 +241,7 @@ module RuboCop
             str = node.value.to_s
             if str.match?(/\A\d+\z/)
               ::Rack::Utils::SYMBOL_TO_STATUS_CODE.key(str.to_i)
-            else
+            elsif ::Rack::Utils::SYMBOL_TO_STATUS_CODE.key?(str.to_sym)
               str
             end
           end
