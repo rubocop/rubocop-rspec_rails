@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+- Handle unknown HTTP status codes for `RSpecRails/HttpStatus` cop. ([@viralpraxis])
+
 ## 2.30.0 (2024-06-12)
 
 - Fix an runtime error for rubocop-rspec +3.0. ([@bquorning])
@@ -81,4 +83,5 @@
 [@r7kamura]: https://github.com/r7kamura
 [@splattael]: https://github.com/splattael
 [@tmaier]: https://github.com/tmaier
+[@viralpraxis]: https://github.com/viralpraxis
 [@ydah]: https://github.com/ydah
