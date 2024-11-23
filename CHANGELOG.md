@@ -3,6 +3,7 @@
 ## Master (Unreleased)
 
 - Handle unknown HTTP status codes for `RSpecRails/HttpStatus` cop. ([@viralpraxis])
+- Remove `RSpecRails/InferredSpecType` now that it is clearly legacy / deprecated behavior. ([@bfad])
 
 ## 2.30.0 (2024-06-12)
 
@@ -72,6 +73,7 @@
 
 [@akiomik]: https://github.com/akiomik
 [@anthony-robin]: https://github.com/anthony-robin
+[@bfad]: https://github.com/bfad
 [@bquorning]: https://github.com/bquorning
 [@corydiamand]: https://github.com/corydiamand
 [@g-rath]: https://github.com/G-Rath

@@ -35,29 +35,6 @@ RSpecRails/HttpStatus:
   VersionChanged: '2.20'
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/HttpStatus
 
-RSpecRails/InferredSpecType:
-  Description: Identifies redundant spec type.
-  Enabled: pending
-  Safe: false
-  VersionAdded: '2.14'
-  Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/InferredSpecType
-  Inferences:
-    channels: channel
-    controllers: controller
-    features: feature
-    generator: generator
-    helpers: helper
-    jobs: job
-    mailboxes: mailbox
-    mailers: mailer
-    models: model
-    requests: request
-    integration: request
-    api: request
-    routing: routing
-    system: system
-    views: view
-
 RSpecRails/MinitestAssertions:
   Description: Check if using Minitest-like matchers.
   Enabled: pending
