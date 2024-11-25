@@ -6,6 +6,7 @@
 
 = RSpecRails
 
+[#rspecrailsavoidsetuphook]
 == RSpecRails/AvoidSetupHook
 
 |===
@@ -20,6 +21,7 @@
 
 Checks that tests use RSpec `before` hook over Rails `setup` method.
 
+[#examples-rspecrailsavoidsetuphook]
 === Examples
 
 [source,ruby]
@@ -35,10 +37,12 @@ before do
 end
 ----
 
+[#references-rspecrailsavoidsetuphook]
 === References
 
 * https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/AvoidSetupHook
 
+[#rspecrailshavehttpstatus]
 == RSpecRails/HaveHttpStatus
 
 |===
@@ -53,8 +57,10 @@ end
 
 Checks that tests use `have_http_status` instead of equality matchers.
 
+[#examples-rspecrailshavehttpstatus]
 === Examples
 
+[#responsemethods_-__response__-_last_response__-_default_-rspecrailshavehttpstatus]
 ==== ResponseMethods: ['response', 'last_response'] (default)
 
 [source,ruby]
@@ -68,6 +74,7 @@ expect(response).to have_http_status(200)
 expect(last_response).to have_http_status(200)
 ----
 
+[#responsemethods_-__foo_response__-rspecrailshavehttpstatus]
 ==== ResponseMethods: ['foo_response']
 
 [source,ruby]
@@ -83,6 +90,7 @@ expect(response).to have_http_status(200)
 expect(last_response).to have_http_status(200)
 ----
 
+[#configurable-attributes-rspecrailshavehttpstatus]
 === Configurable attributes
 
 |===
@@ -93,10 +101,12 @@ expect(last_response).to have_http_status(200)
 | Array
 |===
 
+[#references-rspecrailshavehttpstatus]
 === References
 
 * https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/HaveHttpStatus
 
+[#rspecrailshttpstatus]
 == RSpecRails/HttpStatus
 
 |===
@@ -117,8 +127,10 @@ when setting for `EnforcedStyle: symbolic` or
 `EnforcedStyle: numeric`.
 This cop is also capable of detecting unknown HTTP status codes.
 
+[#examples-rspecrailshttpstatus]
 === Examples
 
+[#_enforcedstyle_-symbolic_-_default_-rspecrailshttpstatus]
 ==== `EnforcedStyle: symbolic` (default)
 
 [source,ruby]
@@ -136,6 +148,7 @@ it { is_expected.to have_http_status :success }
 it { is_expected.to have_http_status :error }
 ----
 
+[#_enforcedstyle_-numeric_-rspecrailshttpstatus]
 ==== `EnforcedStyle: numeric`
 
 [source,ruby]
@@ -153,6 +166,7 @@ it { is_expected.to have_http_status :success }
 it { is_expected.to have_http_status :error }
 ----
 
+[#_enforcedstyle_-be_status_-rspecrailshttpstatus]
 ==== `EnforcedStyle: be_status`
 
 [source,ruby]
@@ -181,6 +195,7 @@ it { is_expected.to have_http_status :oki_doki }
 it { is_expected.to have_http_status :ok }
 ----
 
+[#configurable-attributes-rspecrailshttpstatus]
 === Configurable attributes
 
 |===
@@ -191,10 +206,12 @@ it { is_expected.to have_http_status :ok }
 | `numeric`, `symbolic`, `be_status`
 |===
 
+[#references-rspecrailshttpstatus]
 === References
 
 * https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/HttpStatus
 
+[#rspecrailsinferredspectype]
 == RSpecRails/InferredSpecType
 
 |===
@@ -214,11 +231,13 @@ After setting up rspec-rails, you will have enabled
 spec/rails_helper.rb. This cop works in conjunction with this config.
 If you disable this config, disable this cop as well.
 
+[#safety-rspecrailsinferredspectype]
 === Safety
 
 This cop is marked as unsafe because
 `config.infer_spec_type_from_file_location!` may not be enabled.
 
+[#examples-rspecrailsinferredspectype]
 === Examples
 
 [source,ruby]
@@ -239,6 +258,7 @@ RSpec.describe User, type: :common do
 end
 ----
 
+[#_inferences_-configuration-rspecrailsinferredspectype]
 ==== `Inferences` configuration
 
 [source,ruby]
@@ -264,6 +284,7 @@ RSpec.describe User, type: :common do
 end
 ----
 
+[#configurable-attributes-rspecrailsinferredspectype]
 === Configurable attributes
 
 |===
@@ -274,10 +295,12 @@ end
 | 
 |===
 
+[#references-rspecrailsinferredspectype]
 === References
 
 * https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/InferredSpecType
 
+[#rspecrailsminitestassertions]
 == RSpecRails/MinitestAssertions
 
 |===
@@ -295,6 +318,7 @@ Check if using Minitest-like matchers.
 Check the use of minitest-like matchers
 starting with `assert_` or `refute_`.
 
+[#examples-rspecrailsminitestassertions]
 === Examples
 
 [source,ruby]
@@ -320,10 +344,12 @@ expect(a).to be(true)
 expect(a).to be(false)
 ----
 
+[#references-rspecrailsminitestassertions]
 === References
 
 * https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/MinitestAssertions
 
+[#rspecrailsnegationbevalid]
 == RSpecRails/NegationBeValid
 
 |===
@@ -338,13 +364,16 @@ expect(a).to be(false)
 
 Enforces use of `be_invalid` or `not_to` for negated be_valid.
 
+[#safety-rspecrailsnegationbevalid]
 === Safety
 
 This cop is unsafe because it cannot guarantee that
 the test target is an instance of `ActiveModel::Validations``.
 
+[#examples-rspecrailsnegationbevalid]
 === Examples
 
+[#enforcedstyle_-not_to-_default_-rspecrailsnegationbevalid]
 ==== EnforcedStyle: not_to (default)
 
 [source,ruby]
@@ -359,6 +388,7 @@ expect(foo).not_to be_valid
 expect(foo).to be_invalid.and be_odd
 ----
 
+[#enforcedstyle_-be_invalid-rspecrailsnegationbevalid]
 ==== EnforcedStyle: be_invalid
 
 [source,ruby]
@@ -373,6 +403,7 @@ expect(foo).to be_invalid
 expect(foo).to be_invalid.or be_even
 ----
 
+[#configurable-attributes-rspecrailsnegationbevalid]
 === Configurable attributes
 
 |===
@@ -383,10 +414,12 @@ expect(foo).to be_invalid.or be_even
 | `not_to`, `be_invalid`
 |===
 
+[#references-rspecrailsnegationbevalid]
 === References
 
 * https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/NegationBeValid
 
+[#rspecrailstravelaround]
 == RSpecRails/TravelAround
 
 |===
@@ -401,6 +434,7 @@ expect(foo).to be_invalid.or be_even
 
 Prefer to travel in `before` rather than `around`.
 
+[#safety-rspecrailstravelaround]
 === Safety
 
 This cop is unsafe because the automatic `travel_back` is only run
@@ -410,6 +444,7 @@ And also, this cop's autocorrection is unsafe because the order of
 execution will change if other steps exist before traveling in
 `around`.
 
+[#examples-rspecrailstravelaround]
 === Examples
 
 [source,ruby]
@@ -425,6 +460,7 @@ end
 before { freeze_time }
 ----
 
+[#references-rspecrailstravelaround]
 === References
 
 * https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/TravelAround
