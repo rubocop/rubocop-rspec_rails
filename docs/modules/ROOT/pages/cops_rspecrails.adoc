@@ -291,7 +291,7 @@ end
 | Name | Default value | Configurable values
 
 | Inferences
-| `{"channels"=>"channel", "controllers"=>"controller", "features"=>"feature", "generator"=>"generator", "helpers"=>"helper", "jobs"=>"job", "mailboxes"=>"mailbox", "mailers"=>"mailer", "models"=>"model", "requests"=>"request", "integration"=>"request", "api"=>"request", "routing"=>"routing", "system"=>"system", "views"=>"view"}`
+| `{"channels" => "channel", "controllers" => "controller", "features" => "feature", "generator" => "generator", "helpers" => "helper", "jobs" => "job", "mailboxes" => "mailbox", "mailers" => "mailer", "models" => "model", "requests" => "request", "integration" => "request", "api" => "request", "routing" => "routing", "system" => "system", "views" => "view"}`
 | 
 |===
 
