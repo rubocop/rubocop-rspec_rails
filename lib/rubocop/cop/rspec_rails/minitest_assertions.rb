@@ -39,7 +39,9 @@ module RuboCop
           attr_reader :expected, :actual, :failure_message
 
           def self.minitest_assertion
+            # :nocov:
             raise NotImplementedError
+            # :nocov:
           end
 
           def initialize(expected, actual, failure_message)
@@ -62,7 +64,9 @@ module RuboCop
           end
 
           def assertion
+            # :nocov:
             raise NotImplementedError
+            # :nocov:
           end
         end
 

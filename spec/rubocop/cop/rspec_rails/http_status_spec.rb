@@ -89,6 +89,14 @@ RSpec.describe RuboCop::Cop::RSpecRails::HttpStatus do
 
       expect_no_corrections
     end
+
+    it 'registers no offense when Rack is not loaded' do
+      hide_const('Rack')
+
+      expect_no_offenses(<<~RUBY)
+        it { is_expected.to have_http_status(404) }
+      RUBY
+    end
   end
 
   context 'when EnforcedStyle is `numeric`' do
@@ -162,6 +170,14 @@ RSpec.describe RuboCop::Cop::RSpecRails::HttpStatus do
           it { is_expected.to have_http_status(404) }
         RUBY
       end
+    end
+
+    it 'registers no offense when Rack is not loaded' do
+      hide_const('Rack')
+
+      expect_no_offenses(<<~RUBY)
+        it { is_expected.to have_http_status(:not_found) }
+      RUBY
     end
   end
 
@@ -286,6 +302,14 @@ RSpec.describe RuboCop::Cop::RSpecRails::HttpStatus do
           it { is_expected.to be_not_found }
         RUBY
       end
+    end
+
+    it 'registers no offense when Rack is not loaded' do
+      hide_const('Rack')
+
+      expect_no_offenses(<<~RUBY)
+        it { is_expected.to have_http_status(:not_found) }
+      RUBY
     end
   end
 end

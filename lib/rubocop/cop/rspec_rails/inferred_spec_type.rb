@@ -93,6 +93,7 @@ module RuboCop
 
         # @param [RuboCop::AST::Node] node
         # @return [Parser::Source::Range]
+        # rubocop:disable Metrics/MethodLength
         def remove_range(node)
           if node.left_sibling
             node.source_range.with(
@@ -102,8 +103,13 @@ module RuboCop
             node.source_range.with(
               end_pos: node.right_sibling.source_range.begin_pos
             )
+          else
+            # :nocov:
+            :noop
+            # :nocov:
           end
         end
+        # rubocop:enable Metrics/MethodLength
 
         # @param [RuboCop::AST::PairNode] node
         # @return [RuboCop::AST::Node]
