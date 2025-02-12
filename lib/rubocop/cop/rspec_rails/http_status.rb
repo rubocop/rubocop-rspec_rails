@@ -102,6 +102,10 @@ module RuboCop
             NumericStyleChecker
           when :be_status
             BeStatusStyleChecker
+          else
+            # :nocov:
+            :noop
+            # :nocov:
           end
         end
 
@@ -124,10 +128,6 @@ module RuboCop
             else
               MSG_UNKNOWN_STATUS_CODE
             end
-          end
-
-          def autocorrectable?
-            true
           end
 
           def current
