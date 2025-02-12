@@ -4,4 +4,4 @@
 * xref:cops.adoc[Cops]
 * xref:development.adoc[Development]
 * Cops Documentation
-** xref:cops_rspecrails.adoc[Rails]
+** xref:cops_rspecrails.adoc[RSpecRails]
