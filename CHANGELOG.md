@@ -3,6 +3,7 @@
 ## Master (Unreleased)
 
 - Handle unknown HTTP status codes for `RSpecRails/HttpStatus` cop. ([@viralpraxis])
+- Fix a false negative for `RSpecRails/TravelAround` cop when passed as a proc to a travel method. ([@ydah])
 
 ## 2.30.0 (2024-06-12)
 

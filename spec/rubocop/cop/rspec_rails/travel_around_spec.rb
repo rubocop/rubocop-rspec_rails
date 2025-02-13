@@ -67,6 +67,35 @@ RSpec.describe RuboCop::Cop::RSpecRails::TravelAround do
     end
   end
 
+  context 'with `freeze_time` with `&example` in `around`' do
+    it 'registers offense' do
+      expect_offense(<<~RUBY)
+        around do |example|
+          freeze_time(&example)
+          ^^^^^^^^^^^^^^^^^^^^^ Prefer to travel in `before` rather than `around`.
+        end
+      RUBY
+
+      expect_correction(<<~RUBY)
+        before { freeze_time }
+
+        around do |example|
+          example.run
+        end
+      RUBY
+    end
+  end
+
+  context 'with `freeze_time` with `&example` not in `around`' do
+    it 'registers no offense' do
+      expect_no_offenses(<<~RUBY)
+        examples.each do |example|
+          freeze_time(&example)
+        end
+      RUBY
+    end
+  end
+
   context 'with `freeze_time` in `around(:each)`' do
     it 'registers offense' do
       expect_offense(<<~RUBY)
@@ -98,6 +127,29 @@ RSpec.describe RuboCop::Cop::RSpecRails::TravelAround do
           ^^^^^^^^^^^^^^ Prefer to travel in `before` rather than `around`.
             example.run
           end
+        end
+      RUBY
+
+      expect_correction(<<~RUBY)
+        before { freeze_time }
+
+        around do |example|
+          foo
+
+          example.run
+        end
+      RUBY
+    end
+  end
+
+  context 'with `freeze_time` with `&example` and another node in `around`' do
+    it 'registers offense' do
+      expect_offense(<<~RUBY)
+        around do |example|
+          foo
+
+          freeze_time(&example)
+          ^^^^^^^^^^^^^^^^^^^^^ Prefer to travel in `before` rather than `around`.
         end
       RUBY
 
