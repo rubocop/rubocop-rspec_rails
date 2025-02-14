@@ -21,8 +21,14 @@ module RuboCop
       #     end
       #   end
       #
+      #   # bad
+      #   around do |example|
+      #     freeze_time(&example)
+      #   end
+      #
       #   # good
       #   before { freeze_time }
+      #
       class TravelAround < ::RuboCop::Cop::Base
         extend AutoCorrector
 
@@ -43,6 +49,13 @@ module RuboCop
           )
         PATTERN
 
+        # @!method extract_travel_with_block_pass(node)
+        def_node_search :extract_travel_with_block_pass, <<~PATTERN
+          $(send _ TRAVEL_METHOD_NAMES
+            (block_pass $lvar)
+          )
+        PATTERN
+
         # @!method match_around_each?(node)
         def_node_matcher :match_around_each?, <<~PATTERN
           (block
@@ -52,29 +65,39 @@ module RuboCop
         PATTERN
 
         def on_block(node)
-          run_node = extract_run_in_travel(node)
-          return unless run_node
-
-          around_node = extract_surrounding_around_block(run_node)
-          return unless around_node
-
-          add_offense(node) do |corrector|
-            autocorrect(corrector, node, run_node, around_node)
+          extract_run_in_travel(node) do |run_node|
+            run_in_travel(node, run_node)
+          end
+          extract_travel_with_block_pass(node) do |travel_node, lvar|
+            travel_with_block_pass(travel_node, lvar)
           end
         end
         alias on_numblock on_block
 
         private
 
-        def autocorrect(corrector, node, run_node, around_node)
-          corrector.replace(
-            node,
-            node.body.source
-          )
-          corrector.insert_before(
-            around_node,
-            "before { #{run_node.source} }\n\n"
-          )
+        def run_in_travel(node, run_node)
+          around_node = extract_surrounding_around_block(run_node)
+          return unless around_node
+
+          add_offense(node) do |corrector|
+            corrector.replace(node, node.body.source)
+            corrector.insert_before(around_node,
+                                    "before { #{run_node.source} }\n\n")
+          end
+        end
+
+        def travel_with_block_pass(node, lvar)
+          around_node = extract_surrounding_around_block(node)
+          return unless around_node
+
+          add_offense(node) do |corrector|
+            corrector.replace(node, "#{lvar.name}.run")
+            corrector.insert_before(
+              around_node,
+              "before { #{node.method_name} }\n\n"
+            )
+          end
         end
 
         # @param node [RuboCop::AST::BlockNode]
