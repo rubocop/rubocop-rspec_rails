@@ -12,6 +12,13 @@ RSpecRails/AvoidSetupHook:
   VersionAdded: '2.4'
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/AvoidSetupHook
 
+RSpecRails/BangPersistence:
+  Description: Prefer bang methods for persistence.
+  Enabled: pending
+  SafeAutoCorrect: false
+  VersionAdded: "<<next>>"
+  Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/BangPersistence
+
 RSpecRails/HaveHttpStatus:
   Description: Checks that tests use `have_http_status` instead of equality matchers.
   Enabled: pending

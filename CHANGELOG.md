@@ -4,6 +4,7 @@
 
 - Handle unknown HTTP status codes for `RSpecRails/HttpStatus` cop. ([@viralpraxis])
 - Fix a false negative for `RSpecRails/TravelAround` cop when passed as a proc to a travel method. ([@ydah])
+- Introduce new cop `RSpecRails/BangPersistence` cop. ([@aliismayilov])
 
 ## 2.30.0 (2024-06-12)
 
@@ -72,6 +73,7 @@
 <!-- Contributors (alphabetically) -->
 
 [@akiomik]: https://github.com/akiomik
+[@aliismayilov]: https://github.com/aliismayilov
 [@anthony-robin]: https://github.com/anthony-robin
 [@bquorning]: https://github.com/bquorning
 [@corydiamand]: https://github.com/corydiamand
