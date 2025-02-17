@@ -3,6 +3,7 @@
 === Department xref:cops_rspecrails.adoc[RSpecRails]
 
 * xref:cops_rspecrails.adoc#rspecrailsavoidsetuphook[RSpecRails/AvoidSetupHook]
+* xref:cops_rspecrails.adoc#rspecrailsbangpersistence[RSpecRails/BangPersistence]
 * xref:cops_rspecrails.adoc#rspecrailshavehttpstatus[RSpecRails/HaveHttpStatus]
 * xref:cops_rspecrails.adoc#rspecrailshttpstatus[RSpecRails/HttpStatus]
 * xref:cops_rspecrails.adoc#rspecrailsinferredspectype[RSpecRails/InferredSpecType]
