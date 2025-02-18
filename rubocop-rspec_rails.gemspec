@@ -31,9 +31,11 @@ Gem::Specification.new do |spec|
   spec.metadata = {
     'changelog_uri' => 'https://github.com/rubocop/rubocop-rspec_rails/blob/master/CHANGELOG.md',
     'documentation_uri' => 'https://docs.rubocop.org/rubocop-rspec_rails/',
-    'rubygems_mfa_required' => 'true'
+    'rubygems_mfa_required' => 'true',
+    'default_lint_roller_plugin' => 'RuboCop::RSpecRails::Plugin'
   }
 
-  spec.add_runtime_dependency 'rubocop', '~> 1.61'
-  spec.add_runtime_dependency 'rubocop-rspec', '~> 3', '>= 3.0.1'
+  spec.add_dependency 'lint_roller', '~> 1.1'
+  spec.add_dependency 'rubocop', '~> 1.72', '>= 1.72.1'
+  spec.add_runtime_dependency 'rubocop-rspec', '~> 3.5'
 end

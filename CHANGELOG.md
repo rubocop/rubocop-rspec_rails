@@ -4,6 +4,7 @@
 
 - Handle unknown HTTP status codes for `RSpecRails/HttpStatus` cop. ([@viralpraxis])
 - Fix a false negative for `RSpecRails/TravelAround` cop when passed as a proc to a travel method. ([@ydah])
+- Make RuboCop RSpecRails work as a RuboCop plugin. ([@bquorning])
 
 ## 2.30.0 (2024-06-12)
 
