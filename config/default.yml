@@ -35,6 +35,12 @@ RSpecRails/HttpStatus:
   VersionChanged: '2.20'
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/HttpStatus
 
+RSpecRails/HttpStatusNameConsistency:
+  Description: Enforces consistency by using the current HTTP status names.
+  Enabled: pending
+  VersionAdded: "<<next>>"
+  Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/HttpStatusNameConsistency
+
 RSpecRails/InferredSpecType:
   Description: Identifies redundant spec type.
   Enabled: pending

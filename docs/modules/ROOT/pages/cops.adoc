@@ -5,6 +5,7 @@
 * xref:cops_rspecrails.adoc#rspecrailsavoidsetuphook[RSpecRails/AvoidSetupHook]
 * xref:cops_rspecrails.adoc#rspecrailshavehttpstatus[RSpecRails/HaveHttpStatus]
 * xref:cops_rspecrails.adoc#rspecrailshttpstatus[RSpecRails/HttpStatus]
+* xref:cops_rspecrails.adoc#rspecrailshttpstatusnameconsistency[RSpecRails/HttpStatusNameConsistency]
 * xref:cops_rspecrails.adoc#rspecrailsinferredspectype[RSpecRails/InferredSpecType]
 * xref:cops_rspecrails.adoc#rspecrailsminitestassertions[RSpecRails/MinitestAssertions]
 * xref:cops_rspecrails.adoc#rspecrailsnegationbevalid[RSpecRails/NegationBeValid]

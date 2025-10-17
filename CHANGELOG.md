@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+- Add `RSpecRails/HttpStatusNameConsistency` cop. ([@taketo1113])
+
 ## 2.31.0 (2025-03-10)
 
 - Handle unknown HTTP status codes for `RSpecRails/HttpStatus` cop. ([@viralpraxis])
@@ -86,6 +88,7 @@
 [@pirj]: https://github.com/pirj
 [@r7kamura]: https://github.com/r7kamura
 [@splattael]: https://github.com/splattael
+[@taketo1113]: https://github.com/taketo1113
 [@tmaier]: https://github.com/tmaier
 [@viralpraxis]: https://github.com/viralpraxis
 [@ydah]: https://github.com/ydah

@@ -211,6 +211,38 @@ it { is_expected.to have_http_status :ok }
 
 * https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/HttpStatus
 
+[#rspecrailshttpstatusnameconsistency]
+== RSpecRails/HttpStatusNameConsistency
+
+|===
+| Enabled by default | Safe | Supports autocorrection | Version Added | Version Changed
+
+| Pending
+| Yes
+| Always
+| <<next>>
+| -
+|===
+
+Enforces consistency by using the current HTTP status names.
+
+[#examples-rspecrailshttpstatusnameconsistency]
+=== Examples
+
+[source,ruby]
+----
+# bad
+it { is_expected.to have_http_status :unprocessable_entity }
+
+# good
+it { is_expected.to have_http_status :unprocessable_content }
+----
+
+[#references-rspecrailshttpstatusnameconsistency]
+=== References
+
+* https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/HttpStatusNameConsistency
+
 [#rspecrailsinferredspectype]
 == RSpecRails/InferredSpecType
 
