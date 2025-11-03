@@ -18,6 +18,7 @@ module RuboCop
       #   refute_empty(b)
       #   assert_true(a)
       #   assert_false(a)
+      #   assert_response :ok
       #
       #   # good
       #   expect(b).to eq(a)
@@ -28,6 +29,7 @@ module RuboCop
       #   expect(a).not_to be_empty
       #   expect(a).to be(true)
       #   expect(a).to be(false)
+      #   expect(response).to have_http_status(:ok)
       #
       class MinitestAssertions < ::RuboCop::Cop::Base
         extend AutoCorrector
@@ -312,6 +314,28 @@ module RuboCop
 
           def assertion
             'be(false)'
+          end
+        end
+
+        # :nodoc:
+        class ResponseAssertion < BasicAssertion
+          MATCHERS = %i[
+            assert_response
+          ].freeze
+
+          ASSERT_ACTUAL_NODE = Struct.new(:source).new('response')
+
+          # @!method self.minitest_assertion(node)
+          def_node_matcher 'self.minitest_assertion', <<~PATTERN # rubocop:disable InternalAffairs/NodeMatcherDirective
+            (send nil? {:assert_response} $_ $_?)
+          PATTERN
+
+          def self.match(expected, failure_message)
+            new(expected, ASSERT_ACTUAL_NODE, failure_message.first)
+          end
+
+          def assertion
+            "have_http_status(#{expected})"
           end
         end
 
