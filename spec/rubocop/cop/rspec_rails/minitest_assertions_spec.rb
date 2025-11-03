@@ -947,4 +947,90 @@ RSpec.describe RuboCop::Cop::RSpecRails::MinitestAssertions do
       RUBY
     end
   end
+
+  context 'with response assertions' do
+    it 'registers an offense when using `assert_response`' do
+      expect_offense(<<~RUBY)
+        assert_response :redirect
+        ^^^^^^^^^^^^^^^^^^^^^^^^^ Use `expect(response).to have_http_status(:redirect)`.
+      RUBY
+
+      expect_correction(<<~RUBY)
+        expect(response).to have_http_status(:redirect)
+      RUBY
+    end
+
+    it 'registers an offense when using `assert_response` with a number' do
+      expect_offense(<<~RUBY)
+        assert_response 302
+        ^^^^^^^^^^^^^^^^^^^ Use `expect(response).to have_http_status(302)`.
+      RUBY
+
+      expect_correction(<<~RUBY)
+        expect(response).to have_http_status(302)
+      RUBY
+    end
+
+    it 'registers an offense when using `assert_response` with parentheses' do
+      expect_offense(<<~RUBY)
+        assert_response(:success)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^ Use `expect(response).to have_http_status(:success)`.
+      RUBY
+
+      expect_correction(<<~RUBY)
+        expect(response).to have_http_status(:success)
+      RUBY
+    end
+
+    it 'registers an offense when using `assert_response` with ' \
+       'failure message' do
+      expect_offense(<<~RUBY)
+        assert_response :success, "expected success status"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use `expect(response).to(have_http_status(:success), "expected success status")`.
+      RUBY
+
+      expect_correction(<<~RUBY)
+        expect(response).to(have_http_status(:success), "expected success status")
+      RUBY
+    end
+
+    it 'registers an offense when using `assert_response` with ' \
+       'multi-line arguments' do
+      expect_offense(<<~RUBY)
+        assert_response(:redirect,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^ Use `expect(response).to(have_http_status(:redirect), "expected redirect status")`.
+                        "expected redirect status")
+      RUBY
+
+      expect_correction(<<~RUBY)
+        expect(response).to(have_http_status(:redirect), "expected redirect status")
+      RUBY
+    end
+
+    it 'registers an offense when using `assert_response` with ' \
+       'numeric status' do
+      expect_offense(<<~RUBY)
+        assert_response 200
+        ^^^^^^^^^^^^^^^^^^^ Use `expect(response).to have_http_status(200)`.
+      RUBY
+
+      expect_correction(<<~RUBY)
+        expect(response).to have_http_status(200)
+      RUBY
+    end
+
+    it 'does not register an offense when using ' \
+       '`expect(response).to have_http_status`' do
+      expect_no_offenses(<<~RUBY)
+        expect(response).to have_http_status(:success)
+      RUBY
+    end
+
+    it 'does not register an offense when using ' \
+       '`expect(response).to have_http_status` with numeric status' do
+      expect_no_offenses(<<~RUBY)
+        expect(response).to have_http_status(200)
+      RUBY
+    end
+  end
 end
