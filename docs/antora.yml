@@ -1,5 +1,5 @@
 name: rubocop-rspec_rails
 title: RuboCop RSpec Rails
-version: '2.32'
+version: ~
 nav:
   - modules/ROOT/nav.adoc
