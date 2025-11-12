@@ -38,7 +38,7 @@ RSpecRails/HttpStatus:
 RSpecRails/HttpStatusNameConsistency:
   Description: Enforces consistency by using the current HTTP status names.
   Enabled: pending
-  VersionAdded: "<<next>>"
+  VersionAdded: '2.32'
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/HttpStatusNameConsistency
 
 RSpecRails/InferredSpecType:

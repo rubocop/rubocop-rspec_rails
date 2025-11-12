@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+## 2.32.0 (2025-11-12)
+
 - Add `RSpecRails/HttpStatusNameConsistency` cop. ([@taketo1113])
 - Support correcting `assert_response` assertion in in `RSpec/Rails/MinitestAssertions`. ([@nzlaura])
 
