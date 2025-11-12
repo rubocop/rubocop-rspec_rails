@@ -220,7 +220,7 @@ it { is_expected.to have_http_status :ok }
 | Pending
 | Yes
 | Always
-| <<next>>
+| 2.32
 | -
 |===
 
