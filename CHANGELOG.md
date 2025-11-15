@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+- Fix a false positive for `RspecRails/NegationBeValid` when use `to_not`. ([@ydah])
+
 ## 2.32.0 (2025-11-12)
 
 - Add `RSpecRails/HttpStatusNameConsistency` cop. ([@taketo1113])
