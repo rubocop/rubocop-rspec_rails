@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+- Add new `RSpecRails/ReceivePerformLater` cop. ([@ydah])
+
 ## 2.32.0 (2025-11-12)
 
 - Add `RSpecRails/HttpStatusNameConsistency` cop. ([@taketo1113])
