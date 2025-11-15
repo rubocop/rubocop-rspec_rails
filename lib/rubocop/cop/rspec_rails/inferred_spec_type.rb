@@ -3,7 +3,7 @@
 module RuboCop
   module Cop
     module RSpecRails
-      # Identifies redundant spec type.
+      # Identify redundant spec type.
       #
       # After setting up rspec-rails, you will have enabled
       # `config.infer_spec_type_from_file_location!` by default in
@@ -30,12 +30,7 @@ module RuboCop
       #   RSpec.describe User, type: :common do
       #   end
       #
-      # @example `Inferences` configuration
-      #   # .rubocop.yml
-      #   # RSpecRails/InferredSpecType:
-      #   #   Inferences:
-      #   #     services: service
-      #
+      # @example `Inferences: {services: service}`
       #   # bad
       #   # spec/services/user_spec.rb
       #   RSpec.describe User, type: :service do

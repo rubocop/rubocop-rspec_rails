@@ -3,7 +3,7 @@
 module RuboCop
   module Cop
     module RSpecRails
-      # Checks that tests use RSpec `before` hook over Rails `setup` method.
+      # Prefer RSpec `before` hook over Rails `setup` method.
       #
       # @example
       #   # bad
