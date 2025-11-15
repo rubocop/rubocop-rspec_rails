@@ -38,7 +38,7 @@ module RuboCop
 
         # @!method not_to?(node)
         def_node_matcher :not_to?, <<~PATTERN
-          (send ... :not_to (send nil? :be_valid ...))
+          (send ... {:not_to :to_not} (send nil? :be_valid ...))
         PATTERN
 
         # @!method be_invalid?(node)

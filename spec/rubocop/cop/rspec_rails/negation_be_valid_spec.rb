@@ -48,6 +48,14 @@ RSpec.describe RuboCop::Cop::RSpecRails::NegationBeValid do
       RUBY
     end
 
+    it 'registers an offense when using ' \
+       '`expect(...).to_not be_valid`' do
+      expect_offense(<<~RUBY)
+        expect(foo).to_not be_valid
+                    ^^^^^^^^^^^^^^^ Use `expect(...).to be_invalid`.
+      RUBY
+    end
+
     it 'does not register an offense when using ' \
        '`expect(...).to be_invalid`' do
       expect_no_offenses(<<~RUBY)
