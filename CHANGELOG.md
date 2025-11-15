@@ -4,6 +4,7 @@
 
 - Fix a false positive for `RspecRails/NegationBeValid` when use `to_not`. ([@ydah])
 - Supporting correcting `assest_redirected_to` in `RSpec/Rails/MinitestAssertions`. ([@nzlaura])
+- Add new `RSpecRails/ReceivePerformLater` cop. ([@ydah])
 
 ## 2.32.0 (2025-11-12)
 
