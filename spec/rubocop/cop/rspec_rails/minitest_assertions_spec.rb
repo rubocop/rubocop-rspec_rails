@@ -1033,4 +1033,105 @@ RSpec.describe RuboCop::Cop::RSpecRails::MinitestAssertions do
       RUBY
     end
   end
+
+  context 'with redirect assertions' do
+    it 'registers an offense when using `assert_redirected_to` with a path' do
+      expect_offense(<<~RUBY)
+        assert_redirected_to '/users'
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use `expect(response).to redirect_to('/users')`.
+      RUBY
+
+      expect_correction(<<~RUBY)
+        expect(response).to redirect_to('/users')
+      RUBY
+    end
+
+    # rubocop:disable Layout/LineLength
+    it 'registers an offense when using `assert_redirected_to` with parentheses' do
+      # rubocop:enable Layout/LineLength
+      expect_offense(<<~RUBY)
+        assert_redirected_to('/users')
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use `expect(response).to redirect_to('/users')`.
+      RUBY
+
+      expect_correction(<<~RUBY)
+        expect(response).to redirect_to('/users')
+      RUBY
+    end
+
+    it 'registers an offense when using `assert_redirected_to` with ' \
+       'controller and action' do
+      expect_offense(<<~RUBY)
+        assert_redirected_to controller: 'users', action: 'show'
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use `expect(response).to redirect_to(controller: 'users', action: 'show')`.
+      RUBY
+
+      expect_correction(<<~RUBY)
+        expect(response).to redirect_to(controller: 'users', action: 'show')
+      RUBY
+    end
+
+    it 'registers an offense when using `assert_redirected_to` with ' \
+       'failure message' do
+      expect_offense(<<~RUBY)
+        assert_redirected_to '/users', "expected redirect to users"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use `expect(response).to(redirect_to('/users'), "expected redirect to users")`.
+      RUBY
+
+      expect_correction(<<~RUBY)
+        expect(response).to(redirect_to('/users'), "expected redirect to users")
+      RUBY
+    end
+
+    it 'registers an offense when using `assert_redirected_to` with ' \
+       'multi-line arguments' do
+      expect_offense(<<~RUBY)
+        assert_redirected_to('/users',
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use `expect(response).to(redirect_to('/users'), "expected redirect to users")`.
+                             "expected redirect to users")
+      RUBY
+
+      expect_correction(<<~RUBY)
+        expect(response).to(redirect_to('/users'), "expected redirect to users")
+      RUBY
+    end
+
+    it 'registers an offense when using `assert_redirected_to` with ' \
+       'a URL' do
+      expect_offense(<<~RUBY)
+        assert_redirected_to 'http://example.com/users'
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use `expect(response).to redirect_to('http://example.com/users')`.
+      RUBY
+
+      expect_correction(<<~RUBY)
+        expect(response).to redirect_to('http://example.com/users')
+      RUBY
+    end
+
+    it 'registers an offense when using `assert_redirected_to` with ' \
+       'a named route' do
+      expect_offense(<<~RUBY)
+        assert_redirected_to users_path
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use `expect(response).to redirect_to(users_path)`.
+      RUBY
+
+      expect_correction(<<~RUBY)
+        expect(response).to redirect_to(users_path)
+      RUBY
+    end
+
+    it 'does not register an offense when using ' \
+       '`expect(response).to redirect_to`' do
+      expect_no_offenses(<<~RUBY)
+        expect(response).to redirect_to('/users')
+      RUBY
+    end
+
+    it 'does not register an offense when using ' \
+       '`expect(response).to redirect_to` with controller and action' do
+      expect_no_offenses(<<~RUBY)
+        expect(response).to redirect_to(controller: 'users', action: 'show')
+      RUBY
+    end
+  end
 end

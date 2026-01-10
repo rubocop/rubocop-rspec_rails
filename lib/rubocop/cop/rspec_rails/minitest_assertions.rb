@@ -19,6 +19,7 @@ module RuboCop
       #   assert_true(a)
       #   assert_false(a)
       #   assert_response :ok
+      #   assert_redirected_to '/users'
       #
       #   # good
       #   expect(b).to eq(a)
@@ -30,6 +31,7 @@ module RuboCop
       #   expect(a).to be(true)
       #   expect(a).to be(false)
       #   expect(response).to have_http_status(:ok)
+      #   expect(response).to redirect_to('/users')
       #
       class MinitestAssertions < ::RuboCop::Cop::Base
         extend AutoCorrector
@@ -336,6 +338,28 @@ module RuboCop
 
           def assertion
             "have_http_status(#{expected})"
+          end
+        end
+
+        # :nodoc:
+        class RedirectAssertion < BasicAssertion
+          MATCHERS = %i[
+            assert_redirected_to
+          ].freeze
+
+          ASSERT_ACTUAL_NODE = Struct.new(:source).new('response')
+
+          # @!method self.minitest_assertion(node)
+          def_node_matcher 'self.minitest_assertion', <<~PATTERN # rubocop:disable InternalAffairs/NodeMatcherDirective
+            (send nil? {:assert_redirected_to} $_ $_?)
+          PATTERN
+
+          def self.match(expected, failure_message)
+            new(expected, ASSERT_ACTUAL_NODE, failure_message.first)
+          end
+
+          def assertion
+            "redirect_to(#{expected})"
           end
         end
 
