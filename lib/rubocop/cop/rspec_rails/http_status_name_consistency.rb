@@ -3,7 +3,7 @@
 module RuboCop
   module Cop
     module RSpecRails
-      # Enforces consistency by using the current HTTP status names.
+      # Enforce consistency by using the current HTTP status names.
       #
       # @example
       #
