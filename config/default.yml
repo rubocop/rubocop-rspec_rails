@@ -83,6 +83,12 @@ RSpecRails/NegationBeValid:
   VersionChanged: '2.29'
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/NegationBeValid
 
+RSpecRails/ReceivePerformLater:
+  Description: Prefer `have_enqueued_job` over `receive(:perform_later)`.
+  Enabled: pending
+  VersionAdded: '2.33'
+  Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/ReceivePerformLater
+
 RSpecRails/TravelAround:
   Description: Prefer to travel in `before` rather than `around`.
   Enabled: pending
