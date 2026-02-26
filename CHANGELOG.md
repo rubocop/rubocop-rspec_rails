@@ -2,6 +2,7 @@
 
 ## Master (Unreleased)
 
+- Fix offense message for `RSpecRails/HttpStatusNameConsistency` cop. ([@fatkodima])
 - Fix a false positive for `RspecRails/NegationBeValid` when use `to_not`. ([@ydah])
 - Supporting correcting `assest_redirected_to` in `RSpec/Rails/MinitestAssertions`. ([@nzlaura])
 - Add new `RSpecRails/ReceivePerformLater` cop. ([@ydah])
@@ -87,6 +88,7 @@
 [@anthony-robin]: https://github.com/anthony-robin
 [@bquorning]: https://github.com/bquorning
 [@corydiamand]: https://github.com/corydiamand
+[@fatkodima]: https://github.com/fatkodima
 [@g-rath]: https://github.com/G-Rath
 [@jojos003]: https://github.com/jojos003
 [@mothonmars]: https://github.com/MothOnMars
