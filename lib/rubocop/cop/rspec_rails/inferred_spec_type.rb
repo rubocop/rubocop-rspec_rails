@@ -56,7 +56,7 @@ module RuboCop
         MSG = 'Remove redundant spec type.'
 
         # @param [RuboCop::AST::BlockNode] node
-        def on_block(node)
+        def on_block(node) # rubocop:disable InternalAffairs/ItblockHandler
           return unless example_group?(node)
 
           pair_node = describe_with_type(node)

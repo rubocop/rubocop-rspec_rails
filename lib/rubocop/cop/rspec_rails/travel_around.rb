@@ -64,7 +64,7 @@ module RuboCop
           )
         PATTERN
 
-        def on_block(node)
+        def on_block(node) # rubocop:disable InternalAffairs/ItblockHandler
           extract_run_in_travel(node) do |run_node|
             run_in_travel(node, run_node)
           end
