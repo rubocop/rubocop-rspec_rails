@@ -18,7 +18,7 @@ module RuboCop
 
         requires_gem 'rack', '>= 3.1.0'
 
-        MSG = 'Use `Prefer `:%<preferred>s` over `:%<current>s`.'
+        MSG = 'Prefer `:%<preferred>s` over `:%<current>s`.'
 
         RESTRICT_ON_SEND = %i[have_http_status].freeze
 
