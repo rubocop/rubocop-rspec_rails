@@ -7,13 +7,13 @@ RSpecRails:
     - "**/spec/**/*"
 
 RSpecRails/AvoidSetupHook:
-  Description: Checks that tests use RSpec `before` hook over Rails `setup` method.
+  Description: Prefer RSpec `before` hook over Rails `setup` method.
   Enabled: pending
   VersionAdded: '2.4'
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/AvoidSetupHook
 
 RSpecRails/HaveHttpStatus:
-  Description: Checks that tests use `have_http_status` instead of equality matchers.
+  Description: Prefer `have_http_status` over equality matchers.
   Enabled: pending
   ResponseMethods:
     - response
@@ -24,7 +24,7 @@ RSpecRails/HaveHttpStatus:
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/HaveHttpStatus
 
 RSpecRails/HttpStatus:
-  Description: Enforces use of symbolic or numeric value to describe HTTP status.
+  Description: Enforce use of symbolic or numeric value to describe HTTP status.
   Enabled: true
   EnforcedStyle: symbolic
   SupportedStyles:
@@ -36,13 +36,13 @@ RSpecRails/HttpStatus:
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/HttpStatus
 
 RSpecRails/HttpStatusNameConsistency:
-  Description: Enforces consistency by using the current HTTP status names.
+  Description: Enforce consistency by using the current HTTP status names.
   Enabled: pending
   VersionAdded: '2.32'
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/HttpStatusNameConsistency
 
 RSpecRails/InferredSpecType:
-  Description: Identifies redundant spec type.
+  Description: Identify redundant spec type.
   Enabled: pending
   Safe: false
   VersionAdded: '2.14'
@@ -65,13 +65,13 @@ RSpecRails/InferredSpecType:
     views: view
 
 RSpecRails/MinitestAssertions:
-  Description: Check if using Minitest-like matchers.
+  Description: Prefer RSpec/Rails-style matchers over Minitest-like matchers.
   Enabled: pending
   VersionAdded: '2.17'
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/MinitestAssertions
 
 RSpecRails/NegationBeValid:
-  Description: Enforces use of `be_invalid` or `not_to` for negated be_valid.
+  Description: Enforce use of `be_invalid` or `not_to` for negated be_valid.
   AutoCorrect: contextual
   Safe: false
   EnforcedStyle: not_to
