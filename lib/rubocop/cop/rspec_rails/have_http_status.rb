@@ -5,6 +5,10 @@ module RuboCop
     module RSpecRails
       # Checks that tests use `have_http_status` instead of equality matchers.
       #
+      # @safety
+      #   The autocorrection is marked as unsafe because
+      #   `response.status` response is not always an HTTP response.
+      #
       # @example ResponseMethods: ['response', 'last_response'] (default)
       #   # bad
       #   expect(response.status).to be(200)
