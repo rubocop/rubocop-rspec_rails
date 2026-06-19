@@ -6,6 +6,7 @@
 - Fix a false positive for `RspecRails/NegationBeValid` when use `to_not`. ([@ydah])
 - Supporting correcting `assest_redirected_to` in `RSpec/Rails/MinitestAssertions`. ([@nzlaura])
 - Add new `RSpecRails/ReceivePerformLater` cop. ([@ydah])
+- Fix `RSpecRails/TravelAround` autocorrection to keep the indentation of the surrounding `around` block. ([@eugeneius])
 
 ## 2.32.0 (2025-11-12)
 
@@ -88,6 +89,7 @@
 [@anthony-robin]: https://github.com/anthony-robin
 [@bquorning]: https://github.com/bquorning
 [@corydiamand]: https://github.com/corydiamand
+[@eugeneius]: https://github.com/eugeneius
 [@fatkodima]: https://github.com/fatkodima
 [@g-rath]: https://github.com/G-Rath
 [@jojos003]: https://github.com/jojos003
