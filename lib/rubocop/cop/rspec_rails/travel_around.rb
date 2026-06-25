@@ -82,8 +82,10 @@ module RuboCop
 
           add_offense(node) do |corrector|
             corrector.replace(node, node.body.source)
-            corrector.insert_before(around_node,
-                                    "before { #{run_node.source} }\n\n")
+            corrector.insert_before(
+              around_node,
+              "before { #{run_node.source} }\n\n#{indent(around_node)}"
+            )
           end
         end
 
@@ -95,7 +97,7 @@ module RuboCop
             corrector.replace(node, "#{lvar.name}.run")
             corrector.insert_before(
               around_node,
-              "before { #{node.method_name} }\n\n"
+              "before { #{node.method_name} }\n\n#{indent(around_node)}"
             )
           end
         end

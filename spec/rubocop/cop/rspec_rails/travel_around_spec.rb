@@ -206,4 +206,60 @@ RSpec.describe RuboCop::Cop::RSpecRails::TravelAround do
       RUBY
     end
   end
+
+  context 'with `freeze_time` in an indented `around`' do
+    it 'registers offense and preserves indentation' do
+      expect_offense(<<~RUBY)
+        describe Foo do
+          context 'when bar' do
+            around do |example|
+              freeze_time do
+              ^^^^^^^^^^^^^^ Prefer to travel in `before` rather than `around`.
+                example.run
+              end
+            end
+          end
+        end
+      RUBY
+
+      expect_correction(<<~RUBY)
+        describe Foo do
+          context 'when bar' do
+            before { freeze_time }
+
+            around do |example|
+              example.run
+            end
+          end
+        end
+      RUBY
+    end
+  end
+
+  context 'with `freeze_time` with `&example` in an indented `around`' do
+    it 'registers offense and preserves indentation' do
+      expect_offense(<<~RUBY)
+        describe Foo do
+          context 'when bar' do
+            around do |example|
+              freeze_time(&example)
+              ^^^^^^^^^^^^^^^^^^^^^ Prefer to travel in `before` rather than `around`.
+            end
+          end
+        end
+      RUBY
+
+      expect_correction(<<~RUBY)
+        describe Foo do
+          context 'when bar' do
+            before { freeze_time }
+
+            around do |example|
+              example.run
+            end
+          end
+        end
+      RUBY
+    end
+  end
 end
