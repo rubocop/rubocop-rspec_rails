@@ -4,6 +4,7 @@
 
 - Fix offense message for `RSpecRails/HttpStatusNameConsistency` cop. ([@fatkodima])
 - Fix a false positive for `RspecRails/NegationBeValid` when use `to_not`. ([@ydah])
+- Fix false positives for `RSpecRails/TravelAround` when travel does not directly wrap the around example. ([@ydah])
 - Supporting correcting `assest_redirected_to` in `RSpec/Rails/MinitestAssertions`. ([@nzlaura])
 - Add new `RSpecRails/ReceivePerformLater` cop. ([@ydah])
 - Fix `RSpecRails/TravelAround` autocorrection to keep the indentation of the surrounding `around` block. ([@eugeneius])
