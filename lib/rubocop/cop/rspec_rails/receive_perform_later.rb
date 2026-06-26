@@ -50,7 +50,7 @@ module RuboCop
 
         # @!method expect_or_allow?(node)
         def_node_matcher :expect_or_allow?, <<~PATTERN
-          (send nil? {:expect :allow} const_type?)
+          (send nil? {:expect :allow} {const_type? (send nil? :described_class)})
         PATTERN
 
         def on_send(node)
