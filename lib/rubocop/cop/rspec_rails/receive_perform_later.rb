@@ -62,8 +62,7 @@ module RuboCop
           return if allow_receive_combination?(expect_node, node)
 
           job_class = expect_node.first_argument
-          offense_node = find_offense_range(runner_node)
-          add_offense(offense_node,
+          add_offense(runner_node,
                       message: offense_message(expect_node, job_class,
                                                runner_node, node))
         end
@@ -84,16 +83,6 @@ module RuboCop
 
         def find_runner_node(node)
           node.each_ancestor(:send).find { |ancestor| runner?(ancestor) }
-        end
-
-        def find_offense_range(runner_node)
-          current = runner_node
-          current = current.parent while chained_send?(current)
-          current
-        end
-
-        def chained_send?(node)
-          node.parent&.send_type? && node.parent.receiver == node
         end
 
         def runner?(node)

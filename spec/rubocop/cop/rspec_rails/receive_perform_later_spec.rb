@@ -434,17 +434,15 @@ RSpec.describe RuboCop::Cop::RSpecRails::ReceivePerformLater do
     expect_offense(<<~RUBY)
       it 'chaining after to' do
         result = expect(MyJob).to(receive(:perform_later)).tap { |x| x }
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `expect { ... }.to have_enqueued_job(MyJob)` over `expect(MyJob).to receive(:perform_later)`.
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `expect { ... }.to have_enqueued_job(MyJob)` over `expect(MyJob).to receive(:perform_later)`.
       end
     RUBY
   end
 
   it 'registers offense with deeply nested method chain' do
-    # This tests the case where find_offense_range traverses up
-    # until it reaches a node whose parent is nil
     expect_offense(<<~RUBY)
       expect(MyJob).to(receive(:perform_later)).foo.bar.baz
-      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `expect { ... }.to have_enqueued_job(MyJob)` over `expect(MyJob).to receive(:perform_later)`.
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `expect { ... }.to have_enqueued_job(MyJob)` over `expect(MyJob).to receive(:perform_later)`.
     RUBY
   end
 end
