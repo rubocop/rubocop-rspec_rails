@@ -3,7 +3,7 @@
 module RuboCop
   module Cop
     module RSpecRails
-      # Enforce use of `be_invalid` or `not_to` for negated be_valid.
+      # Enforces use of `be_invalid` or `not_to` for negated be_valid.
       #
       # @safety
       #   This cop is unsafe because it cannot guarantee that
