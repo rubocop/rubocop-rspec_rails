@@ -9,7 +9,7 @@ end
 module RuboCop
   module Cop
     module RSpecRails
-      # Enforce use of symbolic or numeric value to describe HTTP status.
+      # Enforces use of symbolic or numeric value to describe HTTP status.
       #
       # This cop inspects only `have_http_status` calls.
       # So, this cop does not check if a method starting with `be_*` is used

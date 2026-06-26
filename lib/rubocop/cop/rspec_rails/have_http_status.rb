@@ -3,7 +3,7 @@
 module RuboCop
   module Cop
     module RSpecRails
-      # Prefer `have_http_status` over equality matchers.
+      # Checks that tests use `have_http_status` instead of equality matchers.
       #
       # @example `ResponseMethods: ['response', 'last_response']` (default)
       #   # bad
