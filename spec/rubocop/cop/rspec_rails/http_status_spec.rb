@@ -62,9 +62,19 @@ RSpec.describe RuboCop::Cop::RSpecRails::HttpStatus do
       RUBY
     end
 
+    it 'registers an offense when using unknown symbolic value' do
+      expect_offense(<<~RUBY)
+        it { is_expected.to have_http_status :oki_doki }
+                                             ^^^^^^^^^ Unknown status code.
+      RUBY
+
+      expect_no_corrections
+    end
+
     it 'does not register an offense when using custom HTTP code' do
       expect_no_offenses(<<~RUBY)
         it { is_expected.to have_http_status 550 }
+        it { is_expected.to have_http_status "550" }
       RUBY
     end
 
@@ -135,9 +145,27 @@ RSpec.describe RuboCop::Cop::RSpecRails::HttpStatus do
       RUBY
     end
 
+    it 'registers an offense when using numeric string value' do
+      expect_offense(<<~RUBY)
+        it { is_expected.to have_http_status "200" }
+                                             ^^^^^ Prefer `200` over `"200"` to describe HTTP status code.
+      RUBY
+
+      expect_correction(<<~RUBY)
+        it { is_expected.to have_http_status 200 }
+      RUBY
+    end
+
     it 'does not register an offense when using numeric value' do
       expect_no_offenses(<<~RUBY)
         it { is_expected.to have_http_status 200 }
+      RUBY
+    end
+
+    it 'does not register an offense when using custom HTTP code' do
+      expect_no_offenses(<<~RUBY)
+        it { is_expected.to have_http_status 550 }
+        it { is_expected.to have_http_status "550" }
       RUBY
     end
 
@@ -148,6 +176,15 @@ RSpec.describe RuboCop::Cop::RSpecRails::HttpStatus do
         it { is_expected.to have_http_status :missing }
         it { is_expected.to have_http_status :redirect }
       RUBY
+    end
+
+    it 'registers an offense when using unknown symbolic value' do
+      expect_offense(<<~RUBY)
+        it { is_expected.to have_http_status :oki_doki }
+                                             ^^^^^^^^^ Unknown status code.
+      RUBY
+
+      expect_no_corrections
     end
 
     it 'registers an offense for unknown status code' do
@@ -262,6 +299,13 @@ RSpec.describe RuboCop::Cop::RSpecRails::HttpStatus do
       RUBY
     end
 
+    it 'does not register an offense when using custom HTTP code' do
+      expect_no_offenses(<<~RUBY)
+        it { is_expected.to have_http_status 550 }
+        it { is_expected.to have_http_status "550" }
+      RUBY
+    end
+
     it 'does not register an offense when using allowed symbols' do
       expect_no_offenses(<<~RUBY)
         it { is_expected.to have_http_status :error }
@@ -275,6 +319,15 @@ RSpec.describe RuboCop::Cop::RSpecRails::HttpStatus do
       expect_offense(<<~RUBY)
         it { is_expected.to have_http_status("some-custom-string") }
                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Unknown status code.
+      RUBY
+
+      expect_no_corrections
+    end
+
+    it 'registers an offense when using unknown symbolic value' do
+      expect_offense(<<~RUBY)
+        it { is_expected.to have_http_status :oki_doki }
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^ Unknown status code.
       RUBY
 
       expect_no_corrections

@@ -7,6 +7,7 @@
 - Supporting correcting `assest_redirected_to` in `RSpec/Rails/MinitestAssertions`. ([@nzlaura])
 - Add new `RSpecRails/ReceivePerformLater` cop. ([@ydah])
 - Fix `RSpecRails/TravelAround` autocorrection to keep the indentation of the surrounding `around` block. ([@eugeneius])
+- Fix `RSpecRails/HttpStatus` to detect unknown symbolic HTTP statuses and handle custom numeric string statuses consistently. ([@ydah])
 
 ## 2.32.0 (2025-11-12)
 
