@@ -57,18 +57,23 @@ module RuboCop
         def on_send(node)
           return unless receive_perform_later?(node)
           return unless (runner_node = find_runner_node(node))
+          return unless runner_matcher?(node, runner_node)
 
+          register_offense(node, runner_node)
+        end
+
+        private
+
+        def register_offense(matcher_node, runner_node)
           expect_node = runner_node.receiver
           return unless expect_or_allow?(expect_node)
-          return if allow_receive_combination?(expect_node, node)
+          return if allow_receive_combination?(expect_node, matcher_node)
 
           job_class = expect_node.first_argument
           add_offense(runner_node,
                       message: offense_message(expect_node, job_class,
-                                               runner_node, node))
+                                               runner_node, matcher_node))
         end
-
-        private
 
         def allow_receive_combination?(expect_node, matcher_node)
           expect_node.method?(:allow) && matcher_node.method?(:receive)
@@ -85,6 +90,12 @@ module RuboCop
 
         def find_runner_node(node)
           node.each_ancestor(:send).find { |ancestor| runner?(ancestor) }
+        end
+
+        def runner_matcher?(matcher_node, runner_node)
+          node = runner_node.first_argument
+          node = node.receiver while node&.send_type? && node != matcher_node
+          node == matcher_node
         end
 
         def runner?(node)
