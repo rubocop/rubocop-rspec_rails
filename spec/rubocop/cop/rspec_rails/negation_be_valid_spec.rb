@@ -12,6 +12,22 @@ RSpec.describe RuboCop::Cop::RSpecRails::NegationBeValid do
         expect(foo).to be_invalid
                     ^^^^^^^^^^^^^ Use `expect(...).not_to be_valid`.
       RUBY
+
+      expect_correction(<<~RUBY)
+        expect(foo).not_to be_valid
+      RUBY
+    end
+
+    it 'registers an offense when using ' \
+       '`is_expected.to be_invalid`' do
+      expect_offense(<<~RUBY)
+        is_expected.to be_invalid
+                    ^^^^^^^^^^^^^ Use `expect(...).not_to be_valid`.
+      RUBY
+
+      expect_correction(<<~RUBY)
+        is_expected.not_to be_valid
+      RUBY
     end
 
     it 'does not register an offense when using ' \
@@ -46,6 +62,22 @@ RSpec.describe RuboCop::Cop::RSpecRails::NegationBeValid do
         expect(foo).not_to be_valid
                     ^^^^^^^^^^^^^^^ Use `expect(...).to be_invalid`.
       RUBY
+
+      expect_correction(<<~RUBY)
+        expect(foo).to be_invalid
+      RUBY
+    end
+
+    it 'registers an offense when using ' \
+       '`is_expected.not_to be_valid`' do
+      expect_offense(<<~RUBY)
+        is_expected.not_to be_valid
+                    ^^^^^^^^^^^^^^^ Use `expect(...).to be_invalid`.
+      RUBY
+
+      expect_correction(<<~RUBY)
+        is_expected.to be_invalid
+      RUBY
     end
 
     it 'registers an offense when using ' \
@@ -53,6 +85,10 @@ RSpec.describe RuboCop::Cop::RSpecRails::NegationBeValid do
       expect_offense(<<~RUBY)
         expect(foo).to_not be_valid
                     ^^^^^^^^^^^^^^^ Use `expect(...).to be_invalid`.
+      RUBY
+
+      expect_correction(<<~RUBY)
+        expect(foo).to be_invalid
       RUBY
     end
 
