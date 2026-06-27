@@ -16,8 +16,9 @@ module RuboCop
       #     allow(foo).to receive(:bar)
       #   end
       #
-      class AvoidSetupHook < RuboCop::Cop::Base
+      class AvoidSetupHook < RuboCop::Cop::RSpec::Base
         extend AutoCorrector
+        include RuboCop::Cop::RSpec::InsideExampleGroup
 
         MSG = 'Use `before` instead of `setup`.'
 
@@ -29,6 +30,8 @@ module RuboCop
         PATTERN
 
         def on_block(node) # rubocop:disable InternalAffairs/ItblockHandler, InternalAffairs/NumblockHandler
+          return unless inside_example_group?(node)
+
           setup_call(node) do |setup|
             add_offense(node) do |corrector|
               corrector.replace setup, 'before'

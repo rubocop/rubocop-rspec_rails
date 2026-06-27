@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rubocop'
+require 'rubocop-rspec'
 require 'rubocop-rspec_rails'
 require 'rubocop/cops_documentation_generator'
 require 'yard'
