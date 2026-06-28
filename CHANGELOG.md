@@ -8,6 +8,7 @@
 - Add new `RSpecRails/ReceivePerformLater` cop. ([@ydah])
 - Fix `RSpecRails/ReceivePerformLater` offense range to exclude chains after the expectation. ([@ydah])
 - Fix `RSpecRails/TravelAround` autocorrection to keep the indentation of the surrounding `around` block. ([@eugeneius])
+- Fix `RSpecRails/HttpStatus` to detect unknown symbolic HTTP statuses and handle custom numeric string statuses consistently. ([@ydah])
 
 ## 2.32.0 (2025-11-12)
 

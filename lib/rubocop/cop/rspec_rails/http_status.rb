@@ -142,16 +142,44 @@ module RuboCop
             node.sym_type? && ALLOWED_STATUSES.include?(node.value)
           end
 
+          def known_status_symbol?
+            node.sym_type? &&
+              ::Rack::Utils::SYMBOL_TO_STATUS_CODE.key?(node.value)
+          end
+
+          def known_status_code?
+            numeric_status_code? &&
+              ::Rack::Utils::SYMBOL_TO_STATUS_CODE.value?(status_code_number)
+          end
+
           def custom_http_status_code?
-            node.int_type? &&
-              !::Rack::Utils::SYMBOL_TO_STATUS_CODE.value?(node.source.to_i)
+            numeric_status_code? && !known_status_code?
+          end
+
+          def numeric_status_code?
+            node.int_type? || numeric_string?
+          end
+
+          def numeric_string?
+            node.str_type? && node.value.match?(/\A\d+\z/)
+          end
+
+          def status_code_number
+            node.value.to_i
+          end
+
+          def status_code_symbol
+            ::Rack::Utils::SYMBOL_TO_STATUS_CODE.key(status_code_number)
           end
         end
 
         # :nodoc:
         class SymbolicStyleChecker < StyleCheckerBase
           def offensive?
-            !node.sym_type? && !custom_http_status_code?
+            return false if allowed_symbol? || known_status_symbol?
+            return false if custom_http_status_code?
+
+            true
           end
 
           def autocorrectable?
@@ -165,18 +193,17 @@ module RuboCop
           private
 
           def symbol
-            ::Rack::Utils::SYMBOL_TO_STATUS_CODE.key(number)
-          end
-
-          def number
-            node.value.to_i
+            status_code_symbol if known_status_code?
           end
         end
 
         # :nodoc:
         class NumericStyleChecker < StyleCheckerBase
           def offensive?
-            !node.int_type? && !allowed_symbol?
+            return false if node.int_type? || allowed_symbol?
+            return false if custom_http_status_code?
+
+            true
           end
 
           def autocorrectable?
@@ -189,20 +216,19 @@ module RuboCop
 
           private
 
-          def symbol
-            node.value
-          end
-
           def number
-            ::Rack::Utils::SYMBOL_TO_STATUS_CODE[symbol.to_sym]
+            return status_code_number if known_status_code?
+
+            ::Rack::Utils::SYMBOL_TO_STATUS_CODE[node.value.to_sym]
           end
         end
 
         # :nodoc:
         class BeStatusStyleChecker < StyleCheckerBase
           def offensive?
-            (!node.sym_type? && !custom_http_status_code?) ||
-              (!node.int_type? && !allowed_symbol?)
+            return false if allowed_symbol? || custom_http_status_code?
+
+            true
           end
 
           def autocorrectable?
@@ -220,30 +246,18 @@ module RuboCop
           private
 
           def status_code
-            if node.sym_type?
+            if known_status_symbol?
               node.value
-            elsif node.int_type?
-              symbol
+            elsif known_status_code?
+              status_code_symbol
             else
               normalize_str
             end
           end
 
-          def symbol
-            ::Rack::Utils::SYMBOL_TO_STATUS_CODE.key(number)
-          end
-
-          def number
-            node.value.to_i
-          end
-
           def normalize_str
             str = node.value.to_s
-            if str.match?(/\A\d+\z/)
-              ::Rack::Utils::SYMBOL_TO_STATUS_CODE.key(str.to_i)
-            elsif ::Rack::Utils::SYMBOL_TO_STATUS_CODE.key?(str.to_sym)
-              str
-            end
+            str if ::Rack::Utils::SYMBOL_TO_STATUS_CODE.key?(str.to_sym)
           end
         end
       end
