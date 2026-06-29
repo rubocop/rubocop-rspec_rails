@@ -3,6 +3,7 @@
 ## Master (Unreleased)
 
 - Fix offense message for `RSpecRails/HttpStatusNameConsistency` cop. ([@fatkodima])
+- Fix `RSpecRails/MinitestAssertions` autocorrection for quoted predicate symbols. ([@ydah])
 - Fix a false positive for `RspecRails/NegationBeValid` when use `to_not`. ([@ydah])
 - Supporting correcting `assest_redirected_to` in `RSpec/Rails/MinitestAssertions`. ([@nzlaura])
 - Add new `RSpecRails/ReceivePerformLater` cop. ([@ydah])

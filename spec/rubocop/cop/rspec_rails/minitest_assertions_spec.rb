@@ -844,6 +844,25 @@ RSpec.describe RuboCop::Cop::RSpecRails::MinitestAssertions do
     end
 
     it 'registers an offense when using `assert_predicate` with ' \
+       'a quoted predicate symbol' do
+      expect_offense(<<~RUBY)
+        assert_predicate a, :"valid?"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Use `expect(a).to be_valid`.
+      RUBY
+
+      expect_correction(<<~RUBY)
+        expect(a).to be_valid
+      RUBY
+    end
+
+    it 'does not register an offense when the predicate symbol cannot ' \
+       'be converted to a matcher name' do
+      expect_no_offenses(<<~RUBY)
+        assert_predicate a, :"valid-name?"
+      RUBY
+    end
+
+    it 'registers an offense when using `assert_predicate` with ' \
        'an actual predicate and a failure message' do
       expect_offense(<<~RUBY)
         assert_predicate a, :valid?, "must be valid"
