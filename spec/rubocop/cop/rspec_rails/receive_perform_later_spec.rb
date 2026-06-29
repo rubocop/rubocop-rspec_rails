@@ -17,7 +17,7 @@ RSpec.describe RuboCop::Cop::RSpecRails::ReceivePerformLater do
     expect_offense(<<~RUBY)
       it 'does not enqueue a job' do
         expect(MyJob).not_to receive(:perform_later)
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `expect { ... }.to have_enqueued_job(MyJob)` over `expect(MyJob).not_to receive(:perform_later)`.
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `expect { ... }.not_to have_enqueued_job(MyJob)` over `expect(MyJob).not_to receive(:perform_later)`.
         do_something
       end
     RUBY
@@ -28,7 +28,7 @@ RSpec.describe RuboCop::Cop::RSpecRails::ReceivePerformLater do
     expect_offense(<<~RUBY)
       it 'does not enqueue a job' do
         expect(MyJob).to_not receive(:perform_later)
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `expect { ... }.to have_enqueued_job(MyJob)` over `expect(MyJob).to_not receive(:perform_later)`.
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `expect { ... }.to_not have_enqueued_job(MyJob)` over `expect(MyJob).to_not receive(:perform_later)`.
         do_something
       end
     RUBY
@@ -98,7 +98,7 @@ RSpec.describe RuboCop::Cop::RSpecRails::ReceivePerformLater do
         allow(MyJob).to receive(:perform_later)
         do_something
         expect(MyJob).not_to have_received(:perform_later)
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `expect { ... }.to have_enqueued_job(MyJob)` over `expect(MyJob).not_to have_received(:perform_later)`.
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `expect { ... }.not_to have_enqueued_job(MyJob)` over `expect(MyJob).not_to have_received(:perform_later)`.
       end
     RUBY
   end
@@ -110,7 +110,7 @@ RSpec.describe RuboCop::Cop::RSpecRails::ReceivePerformLater do
         allow(MyJob).to receive(:perform_later)
         do_something
         expect(MyJob).to_not have_received(:perform_later)
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `expect { ... }.to have_enqueued_job(MyJob)` over `expect(MyJob).to_not have_received(:perform_later)`.
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `expect { ... }.to_not have_enqueued_job(MyJob)` over `expect(MyJob).to_not have_received(:perform_later)`.
       end
     RUBY
   end
@@ -311,7 +311,7 @@ RSpec.describe RuboCop::Cop::RSpecRails::ReceivePerformLater do
     expect_offense(<<~RUBY)
       it 'uses expect and not_to' do
         expect(MyJob).not_to receive(:perform_later)
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `expect { ... }.to have_enqueued_job(MyJob)` over `expect(MyJob).not_to receive(:perform_later)`.
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `expect { ... }.not_to have_enqueued_job(MyJob)` over `expect(MyJob).not_to receive(:perform_later)`.
       end
     RUBY
   end
@@ -320,7 +320,7 @@ RSpec.describe RuboCop::Cop::RSpecRails::ReceivePerformLater do
     expect_offense(<<~RUBY)
       it 'uses expect and to_not' do
         expect(MyJob).to_not receive(:perform_later)
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `expect { ... }.to have_enqueued_job(MyJob)` over `expect(MyJob).to_not receive(:perform_later)`.
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `expect { ... }.to_not have_enqueued_job(MyJob)` over `expect(MyJob).to_not receive(:perform_later)`.
       end
     RUBY
   end

@@ -35,7 +35,8 @@ module RuboCop
       #     .at(Date.tomorrow.noon)
       #
       class ReceivePerformLater < ::RuboCop::Cop::Base
-        MSG = 'Prefer `expect { ... }.to have_enqueued_job(%<job_class>s)` ' \
+        MSG = 'Prefer `expect { ... }.%<runner>s ' \
+              'have_enqueued_job(%<job_class>s)` ' \
               'over `%<receiver>s(%<job_class>s).%<to>s ' \
               '%<matcher>s(:perform_later)`.'
 
@@ -77,6 +78,7 @@ module RuboCop
           format(MSG,
                  receiver: expect_node.method_name,
                  job_class: job_class.source,
+                 runner: runner_node.method_name,
                  to: runner_node.method_name,
                  matcher: matcher_node.method_name)
         end
