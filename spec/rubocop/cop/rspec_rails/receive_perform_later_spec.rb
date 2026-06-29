@@ -224,6 +224,15 @@ RSpec.describe RuboCop::Cop::RSpecRails::ReceivePerformLater do
     RUBY
   end
 
+  it 'does not register an offense when `receive(:perform_later)` ' \
+     'is an argument to another matcher' do
+    expect_no_offenses(<<~RUBY)
+      it 'uses receive perform_later inside another matcher' do
+        expect(MyJob).to custom_matcher(receive(:perform_later))
+      end
+    RUBY
+  end
+
   it 'does not register an offense when using ' \
      '`expect(instance).to receive(:perform_later)`' do
     expect_no_offenses(<<~RUBY)
