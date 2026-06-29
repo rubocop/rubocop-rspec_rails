@@ -42,10 +42,23 @@ module RuboCop
 
           attr_reader :expected, :actual, :failure_message
 
+          def self.match_assertions(*matchers, captures:)
+            const_set(:MATCHERS, matchers.freeze)
+
+            matcher_pattern = matchers.map { |matcher| ":#{matcher}" }.join(' ')
+            def_node_matcher 'self.minitest_assertion', <<~PATTERN # rubocop:disable InternalAffairs/NodeMatcherDirective
+              (send nil? {#{matcher_pattern}} #{captures})
+            PATTERN
+          end
+
           def self.minitest_assertion
             # :nocov:
             raise NotImplementedError
             # :nocov:
+          end
+
+          def self.match(expected, actual, failure_message)
+            new(expected, actual, failure_message.first)
           end
 
           def initialize(expected, actual, failure_message)
@@ -76,20 +89,10 @@ module RuboCop
 
         # :nodoc:
         class EqualAssertion < BasicAssertion
-          MATCHERS = %i[
-            assert_equal
-            assert_not_equal
-            refute_equal
-          ].freeze
-
-          # @!method self.minitest_assertion(node)
-          def_node_matcher 'self.minitest_assertion', <<~PATTERN # rubocop:disable InternalAffairs/NodeMatcherDirective
-            (send nil? {:assert_equal :assert_not_equal :refute_equal} $_ $_ $_?)
-          PATTERN
-
-          def self.match(expected, actual, failure_message)
-            new(expected, actual, failure_message.first)
-          end
+          match_assertions :assert_equal,
+                           :assert_not_equal,
+                           :refute_equal,
+                           captures: '$_ $_ $_?'
 
           def assertion
             "eq(#{expected})"
@@ -98,20 +101,10 @@ module RuboCop
 
         # :nodoc:
         class KindOfAssertion < BasicAssertion
-          MATCHERS = %i[
-            assert_kind_of
-            assert_not_kind_of
-            refute_kind_of
-          ].freeze
-
-          # @!method self.minitest_assertion(node)
-          def_node_matcher 'self.minitest_assertion', <<~PATTERN # rubocop:disable InternalAffairs/NodeMatcherDirective
-            (send nil? {:assert_kind_of :assert_not_kind_of :refute_kind_of} $_ $_ $_?)
-          PATTERN
-
-          def self.match(expected, actual, failure_message)
-            new(expected, actual, failure_message.first)
-          end
+          match_assertions :assert_kind_of,
+                           :assert_not_kind_of,
+                           :refute_kind_of,
+                           captures: '$_ $_ $_?'
 
           def assertion
             "be_a_kind_of(#{expected})"
@@ -120,20 +113,10 @@ module RuboCop
 
         # :nodoc:
         class InstanceOfAssertion < BasicAssertion
-          MATCHERS = %i[
-            assert_instance_of
-            assert_not_instance_of
-            refute_instance_of
-          ].freeze
-
-          # @!method self.minitest_assertion(node)
-          def_node_matcher 'self.minitest_assertion', <<~PATTERN # rubocop:disable InternalAffairs/NodeMatcherDirective
-            (send nil? {:assert_instance_of :assert_not_instance_of :refute_instance_of} $_ $_ $_?)
-          PATTERN
-
-          def self.match(expected, actual, failure_message)
-            new(expected, actual, failure_message.first)
-          end
+          match_assertions :assert_instance_of,
+                           :assert_not_instance_of,
+                           :refute_instance_of,
+                           captures: '$_ $_ $_?'
 
           def assertion
             "be_an_instance_of(#{expected})"
@@ -142,16 +125,10 @@ module RuboCop
 
         # :nodoc:
         class IncludesAssertion < BasicAssertion
-          MATCHERS = %i[
-            assert_includes
-            assert_not_includes
-            refute_includes
-          ].freeze
-
-          # @!method self.minitest_assertion(node)
-          def_node_matcher 'self.minitest_assertion', <<~PATTERN # rubocop:disable InternalAffairs/NodeMatcherDirective
-            (send nil? {:assert_includes :assert_not_includes :refute_includes} $_ $_ $_?)
-          PATTERN
+          match_assertions :assert_includes,
+                           :assert_not_includes,
+                           :refute_includes,
+                           captures: '$_ $_ $_?'
 
           def self.match(collection, expected, failure_message)
             new(expected, collection, failure_message.first)
@@ -164,16 +141,10 @@ module RuboCop
 
         # :nodoc:
         class InDeltaAssertion < BasicAssertion
-          MATCHERS = %i[
-            assert_in_delta
-            assert_not_in_delta
-            refute_in_delta
-          ].freeze
-
-          # @!method self.minitest_assertion(node)
-          def_node_matcher 'self.minitest_assertion', <<~PATTERN # rubocop:disable InternalAffairs/NodeMatcherDirective
-            (send nil? {:assert_in_delta :assert_not_in_delta :refute_in_delta} $_ $_ $_? $_?)
-          PATTERN
+          match_assertions :assert_in_delta,
+                           :assert_not_in_delta,
+                           :refute_in_delta,
+                           captures: '$_ $_ $_? $_?'
 
           def self.match(expected, actual, delta, failure_message)
             new(expected, actual, delta.first, failure_message.first)
@@ -192,16 +163,10 @@ module RuboCop
 
         # :nodoc:
         class PredicateAssertion < BasicAssertion
-          MATCHERS = %i[
-            assert_predicate
-            assert_not_predicate
-            refute_predicate
-          ].freeze
-
-          # @!method self.minitest_assertion(node)
-          def_node_matcher 'self.minitest_assertion', <<~PATTERN # rubocop:disable InternalAffairs/NodeMatcherDirective
-            (send nil? {:assert_predicate :assert_not_predicate :refute_predicate} $_ ${sym} $_?)
-          PATTERN
+          match_assertions :assert_predicate,
+                           :assert_not_predicate,
+                           :refute_predicate,
+                           captures: '$_ ${sym} $_?'
 
           def self.match(subject, predicate, failure_message)
             return nil unless predicate.value.end_with?('?')
@@ -216,19 +181,9 @@ module RuboCop
 
         # :nodoc:
         class MatchAssertion < BasicAssertion
-          MATCHERS = %i[
-            assert_match
-            refute_match
-          ].freeze
-
-          # @!method self.minitest_assertion(node)
-          def_node_matcher 'self.minitest_assertion', <<~PATTERN # rubocop:disable InternalAffairs/NodeMatcherDirective
-            (send nil? {:assert_match :refute_match} $_ $_ $_?)
-          PATTERN
-
-          def self.match(matcher, actual, failure_message)
-            new(matcher, actual, failure_message.first)
-          end
+          match_assertions :assert_match,
+                           :refute_match,
+                           captures: '$_ $_ $_?'
 
           def assertion
             "match(#{expected})"
@@ -237,16 +192,10 @@ module RuboCop
 
         # :nodoc:
         class NilAssertion < BasicAssertion
-          MATCHERS = %i[
-            assert_nil
-            assert_not_nil
-            refute_nil
-          ].freeze
-
-          # @!method self.minitest_assertion(node)
-          def_node_matcher 'self.minitest_assertion', <<~PATTERN # rubocop:disable InternalAffairs/NodeMatcherDirective
-            (send nil? {:assert_nil :assert_not_nil :refute_nil} $_ $_?)
-          PATTERN
+          match_assertions :assert_nil,
+                           :assert_not_nil,
+                           :refute_nil,
+                           captures: '$_ $_?'
 
           def self.match(actual, failure_message)
             new(nil, actual, failure_message.first)
@@ -259,16 +208,10 @@ module RuboCop
 
         # :nodoc:
         class EmptyAssertion < BasicAssertion
-          MATCHERS = %i[
-            assert_empty
-            assert_not_empty
-            refute_empty
-          ].freeze
-
-          # @!method self.minitest_assertion(node)
-          def_node_matcher 'self.minitest_assertion', <<~PATTERN # rubocop:disable InternalAffairs/NodeMatcherDirective
-            (send nil? {:assert_empty :assert_not_empty :refute_empty} $_ $_?)
-          PATTERN
+          match_assertions :assert_empty,
+                           :assert_not_empty,
+                           :refute_empty,
+                           captures: '$_ $_?'
 
           def self.match(actual, failure_message)
             new(nil, actual, failure_message.first)
@@ -281,14 +224,7 @@ module RuboCop
 
         # :nodoc:
         class TrueAssertion < BasicAssertion
-          MATCHERS = %i[
-            assert_true
-          ].freeze
-
-          # @!method self.minitest_assertion(node)
-          def_node_matcher 'self.minitest_assertion', <<~PATTERN # rubocop:disable InternalAffairs/NodeMatcherDirective
-            (send nil? {:assert_true} $_ $_?)
-          PATTERN
+          match_assertions :assert_true, captures: '$_ $_?'
 
           def self.match(actual, failure_message)
             new(nil, actual, failure_message.first)
@@ -301,14 +237,7 @@ module RuboCop
 
         # :nodoc:
         class FalseAssertion < BasicAssertion
-          MATCHERS = %i[
-            assert_false
-          ].freeze
-
-          # @!method self.minitest_assertion(node)
-          def_node_matcher 'self.minitest_assertion', <<~PATTERN # rubocop:disable InternalAffairs/NodeMatcherDirective
-            (send nil? {:assert_false} $_ $_?)
-          PATTERN
+          match_assertions :assert_false, captures: '$_ $_?'
 
           def self.match(actual, failure_message)
             new(nil, actual, failure_message.first)
@@ -320,21 +249,19 @@ module RuboCop
         end
 
         # :nodoc:
-        class ResponseAssertion < BasicAssertion
-          MATCHERS = %i[
-            assert_response
-          ].freeze
+        module ResponseAssertionActual
+          RESPONSE_NODE = Struct.new(:source).new('response')
 
-          ASSERT_ACTUAL_NODE = Struct.new(:source).new('response')
-
-          # @!method self.minitest_assertion(node)
-          def_node_matcher 'self.minitest_assertion', <<~PATTERN # rubocop:disable InternalAffairs/NodeMatcherDirective
-            (send nil? {:assert_response} $_ $_?)
-          PATTERN
-
-          def self.match(expected, failure_message)
-            new(expected, ASSERT_ACTUAL_NODE, failure_message.first)
+          def match(expected, failure_message)
+            new(expected, RESPONSE_NODE, failure_message.first)
           end
+        end
+
+        # :nodoc:
+        class ResponseAssertion < BasicAssertion
+          extend ResponseAssertionActual
+
+          match_assertions :assert_response, captures: '$_ $_?'
 
           def assertion
             "have_http_status(#{expected})"
@@ -343,20 +270,9 @@ module RuboCop
 
         # :nodoc:
         class RedirectAssertion < BasicAssertion
-          MATCHERS = %i[
-            assert_redirected_to
-          ].freeze
+          extend ResponseAssertionActual
 
-          ASSERT_ACTUAL_NODE = Struct.new(:source).new('response')
-
-          # @!method self.minitest_assertion(node)
-          def_node_matcher 'self.minitest_assertion', <<~PATTERN # rubocop:disable InternalAffairs/NodeMatcherDirective
-            (send nil? {:assert_redirected_to} $_ $_?)
-          PATTERN
-
-          def self.match(expected, failure_message)
-            new(expected, ASSERT_ACTUAL_NODE, failure_message.first)
-          end
+          match_assertions :assert_redirected_to, captures: '$_ $_?'
 
           def assertion
             "redirect_to(#{expected})"
