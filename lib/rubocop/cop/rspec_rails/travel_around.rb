@@ -45,7 +45,7 @@ module RuboCop
           (block
             $(send nil? TRAVEL_METHOD_NAMES ...)
             (args ...)
-            (send _ :run)
+            (send (lvar _) :run)
           )
         PATTERN
 
@@ -76,15 +76,16 @@ module RuboCop
 
         private
 
-        def run_in_travel(node, run_node)
-          around_node = extract_surrounding_around_block(run_node)
+        def run_in_travel(node, travel_node)
+          around_node = extract_surrounding_around_block(node)
           return unless around_node
+          return unless matching_run_receiver?(node.body, around_node)
 
           add_offense(node) do |corrector|
             corrector.replace(node, node.body.source)
             corrector.insert_before(
               around_node,
-              "before { #{run_node.source} }\n\n#{indent(around_node)}"
+              "before { #{travel_node.source} }\n\n#{indent(around_node)}"
             )
           end
         end
@@ -92,6 +93,7 @@ module RuboCop
         def travel_with_block_pass(node, lvar)
           around_node = extract_surrounding_around_block(node)
           return unless around_node
+          return unless lvar.name == around_argument_name(around_node)
 
           add_offense(node) do |corrector|
             corrector.replace(node, "#{lvar.name}.run")
@@ -106,8 +108,22 @@ module RuboCop
         # @return [RuboCop::AST::BlockNode, nil]
         def extract_surrounding_around_block(node)
           node.each_ancestor(:block).find do |ancestor|
-            match_around_each?(ancestor)
+            match_around_each?(ancestor) &&
+              direct_child_of_around_body?(node, ancestor)
           end
+        end
+
+        def direct_child_of_around_body?(node, around_node)
+          node.parent == around_node ||
+            (node.parent.begin_type? && node.parent.parent == around_node)
+        end
+
+        def matching_run_receiver?(run_node, around_node)
+          run_node.receiver.children.first == around_argument_name(around_node)
+        end
+
+        def around_argument_name(around_node)
+          around_node.first_argument&.name
         end
       end
     end
