@@ -2,6 +2,7 @@
 
 ## Master (Unreleased)
 
+- Speed up loading rubocop-rspec_rails by lazily loading only the cops needed for a run. This requires RuboCop 1.89.0+. ([@koic])
 - Fix offense message for `RSpecRails/HttpStatusNameConsistency` cop. ([@fatkodima])
 - Fix a false positive for `RspecRails/NegationBeValid` when use `to_not`. ([@ydah])
 - Fix false positives for `RSpecRails/TravelAround` when travel does not directly wrap the around example. ([@ydah])
@@ -97,6 +98,7 @@
 [@fatkodima]: https://github.com/fatkodima
 [@g-rath]: https://github.com/G-Rath
 [@jojos003]: https://github.com/jojos003
+[@koic]: https://github.com/koic
 [@mothonmars]: https://github.com/MothOnMars
 [@mvz]: https://github.com/mvz
 [@nzlaura]: https://github.com/nzlaura

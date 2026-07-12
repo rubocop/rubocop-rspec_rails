@@ -14,7 +14,7 @@ Use the bundled rake task `new_cop` to generate a cop template:
 $ bundle exec rake 'new_cop[RSpecRails/CopName]'
 [create] lib/rubocop/cop/rspec_rails/cop_name.rb
 [create] spec/rubocop/cop/rspec_rails/cop_name_spec.rb
-[modify] lib/rubocop/cop/rspec_rails_cops.rb - `require_relative 'rspec_rails/cop_name'` was injected.
+[modify] lib/rubocop/cop/rspec_rails.rb - `register_cop :CopName, "#{__dir__}/rspec_rails/cop_name"` was injected.
 [modify] A configuration for the cop is added into config/default.yml.
 Do 4 steps:
   1. Modify the description of RSpecRails/CopName in config/default.yml

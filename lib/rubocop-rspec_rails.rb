@@ -10,4 +10,4 @@ require_relative 'rubocop/rspec_rails/plugin'
 require_relative 'rubocop/rspec_rails/version'
 
 require 'rubocop/cop/rspec/base'
-require_relative 'rubocop/cop/rspec_rails_cops'
+require_relative 'rubocop/cop/rspec_rails'
