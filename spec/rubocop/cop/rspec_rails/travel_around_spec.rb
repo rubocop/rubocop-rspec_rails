@@ -67,6 +67,78 @@ RSpec.describe RuboCop::Cop::RSpecRails::TravelAround do
     end
   end
 
+  context 'with `freeze_time` in `around` using another receiver' do
+    it 'registers no offense' do
+      expect_no_offenses(<<~RUBY)
+        around do |example|
+          other = example
+          freeze_time do
+            other.run
+          end
+        end
+      RUBY
+    end
+  end
+
+  context 'with `freeze_time` in `around` using another block pass' do
+    it 'registers no offense' do
+      expect_no_offenses(<<~RUBY)
+        around do |example|
+          other = proc {}
+          freeze_time(&other)
+        end
+      RUBY
+    end
+  end
+
+  context 'with `freeze_time` nested in another block in `around`' do
+    it 'registers no offense' do
+      expect_no_offenses(<<~RUBY)
+        around do |example|
+          [1].each do
+            freeze_time do
+              example.run
+            end
+          end
+        end
+      RUBY
+    end
+  end
+
+  context 'with `freeze_time` in `around` without a block argument' do
+    it 'registers no offense' do
+      expect_no_offenses(<<~RUBY)
+        around do
+          example = double
+          freeze_time do
+            example.run
+          end
+        end
+      RUBY
+    end
+  end
+
+  context 'with `freeze_time` matching a custom around block argument' do
+    it 'registers offense' do
+      expect_offense(<<~RUBY)
+        around do |test_case|
+          freeze_time do
+          ^^^^^^^^^^^^^^ Prefer to travel in `before` rather than `around`.
+            test_case.run
+          end
+        end
+      RUBY
+
+      expect_correction(<<~RUBY)
+        before { freeze_time }
+
+        around do |test_case|
+          test_case.run
+        end
+      RUBY
+    end
+  end
+
   context 'with `freeze_time` with `&example` in `around`' do
     it 'registers offense' do
       expect_offense(<<~RUBY)
