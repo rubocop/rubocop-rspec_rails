@@ -169,13 +169,27 @@ module RuboCop
                            captures: '$_ ${sym} $_?'
 
           def self.match(subject, predicate, failure_message)
-            return nil unless predicate.value.end_with?('?')
+            predicate_name = predicate.value.to_s
+            return nil unless predicate_name.end_with?('?')
 
-            new(predicate, subject, failure_message.first)
+            matcher_name = predicate_name.delete_suffix('?')
+            return nil unless valid_matcher_name?(matcher_name)
+
+            new(predicate, subject, failure_message.first, matcher_name)
+          end
+
+          def self.valid_matcher_name?(matcher_name)
+            matcher_name.match?(/\A\w+\z/)
+          end
+
+          def initialize(expected, actual, failure_message, matcher_name)
+            super(expected, actual, failure_message)
+
+            @matcher_name = matcher_name
           end
 
           def assertion
-            "be_#{expected.delete_prefix(':').delete_suffix('?')}"
+            "be_#{@matcher_name}"
           end
         end
 
