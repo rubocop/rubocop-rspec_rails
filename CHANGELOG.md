@@ -3,6 +3,7 @@
 ## Master (Unreleased)
 
 - Fix offense message for `RSpecRails/HttpStatusNameConsistency` cop. ([@fatkodima])
+- Fix `RSpecRails/AvoidSetupHook` to only check setup hooks inside example groups and support numbered blocks. ([@ydah])
 - Fix a false positive for `RspecRails/NegationBeValid` when use `to_not`. ([@ydah])
 - Supporting correcting `assest_redirected_to` in `RSpec/Rails/MinitestAssertions`. ([@nzlaura])
 - Add new `RSpecRails/ReceivePerformLater` cop. ([@ydah])
