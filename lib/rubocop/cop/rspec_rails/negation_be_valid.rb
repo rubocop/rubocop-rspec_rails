@@ -9,7 +9,7 @@ module RuboCop
       #   This cop is unsafe because it cannot guarantee that
       #   the test target is an instance of `ActiveModel::Validations``.
       #
-      # @example EnforcedStyle: not_to (default)
+      # @example `EnforcedStyle: not_to` (default)
       #   # bad
       #   expect(foo).to be_invalid
       #
@@ -19,7 +19,7 @@ module RuboCop
       #   # good (with method chain)
       #   expect(foo).to be_invalid.and be_odd
       #
-      # @example EnforcedStyle: be_invalid
+      # @example `EnforcedStyle: be_invalid`
       #   # bad
       #   expect(foo).not_to be_valid
       #
