@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'rspec_rails/avoid_setup_hook'
-require_relative 'rspec_rails/have_http_status'
-require_relative 'rspec_rails/http_status'
-require_relative 'rspec_rails/http_status_name_consistency'
-require_relative 'rspec_rails/inferred_spec_type'
-require_relative 'rspec_rails/minitest_assertions'
-require_relative 'rspec_rails/negation_be_valid'
-require_relative 'rspec_rails/receive_perform_later'
-require_relative 'rspec_rails/travel_around'
+# @deprecated This file is deprecated. Cops are registered for lazy loading in
+#   `rubocop/cop/rspec_rails`; this file is kept for compatibility with code
+#   that requires it directly.
+require_relative 'rspec_rails'
