@@ -50,7 +50,7 @@ module RuboCop
       #   # spec/services/user_spec.rb
       #   RSpec.describe User, type: :common do
       #   end
-      class InferredSpecType < ::RuboCop::Cop::RSpec::Base
+      class InferredSpecType < RuboCop::Cop::RSpec::Base
         extend AutoCorrector
 
         MSG = 'Remove redundant spec type.'

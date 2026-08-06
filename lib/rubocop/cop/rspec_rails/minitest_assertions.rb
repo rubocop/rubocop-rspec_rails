@@ -33,7 +33,7 @@ module RuboCop
       #   expect(response).to have_http_status(:ok)
       #   expect(response).to redirect_to('/users')
       #
-      class MinitestAssertions < ::RuboCop::Cop::Base
+      class MinitestAssertions < RuboCop::Cop::Base
         extend AutoCorrector
 
         # :nodoc:

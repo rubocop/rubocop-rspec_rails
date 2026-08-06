@@ -34,7 +34,7 @@ module RuboCop
       #     .on_queue('mailers')
       #     .at(Date.tomorrow.noon)
       #
-      class ReceivePerformLater < ::RuboCop::Cop::Base
+      class ReceivePerformLater < RuboCop::Cop::Base
         MSG = 'Prefer `expect { ... }.%<runner>s ' \
               'have_enqueued_job(%<job_class>s)` ' \
               'over `%<receiver>s(%<job_class>s).%<to>s ' \

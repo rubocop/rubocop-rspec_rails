@@ -13,7 +13,7 @@ module RuboCop
       #   # good
       #   it { is_expected.to have_http_status :unprocessable_content }
       #
-      class HttpStatusNameConsistency < ::RuboCop::Cop::Base
+      class HttpStatusNameConsistency < RuboCop::Cop::Base
         extend AutoCorrector
 
         requires_gem 'rack', '>= 3.1.0'

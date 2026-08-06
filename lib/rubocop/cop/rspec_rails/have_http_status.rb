@@ -25,7 +25,7 @@ module RuboCop
       #   expect(response).to have_http_status(200)
       #   expect(last_response).to have_http_status(200)
       #
-      class HaveHttpStatus < ::RuboCop::Cop::Base
+      class HaveHttpStatus < RuboCop::Cop::Base
         extend AutoCorrector
 
         MSG =
