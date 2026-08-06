@@ -64,7 +64,7 @@ module RuboCop
       #
       #   # good
       #   it { is_expected.to have_http_status :ok }
-      class HttpStatus < ::RuboCop::Cop::Base
+      class HttpStatus < RuboCop::Cop::Base
         extend AutoCorrector
         include ConfigurableEnforcedStyle
 
