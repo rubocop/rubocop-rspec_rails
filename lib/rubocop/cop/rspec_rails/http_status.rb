@@ -67,6 +67,7 @@ module RuboCop
       class HttpStatus < ::RuboCop::Cop::Base
         extend AutoCorrector
         include ConfigurableEnforcedStyle
+
         RESTRICT_ON_SEND = %i[have_http_status].freeze
 
         # @!method http_status(node)
