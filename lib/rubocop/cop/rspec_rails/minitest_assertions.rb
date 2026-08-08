@@ -3,10 +3,10 @@
 module RuboCop
   module Cop
     module RSpecRails
-      # Check if using Minitest-like matchers.
+      # Detects Minitest-like matchers.
       #
-      # Check the use of minitest-like matchers
-      # starting with `assert_` or `refute_`.
+      # Detects the use of Minitest-like matchers
+      # (those starting with `assert_` or `refute_`).
       #
       # @example
       #   # bad
