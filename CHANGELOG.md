@@ -4,6 +4,7 @@
 
 - Speed up loading rubocop-rspec_rails by lazily loading only the cops needed for a run. This requires RuboCop 1.89.0+. ([@koic])
 - Fix offense message for `RSpecRails/HttpStatusNameConsistency` cop. ([@fatkodima])
+- Fix `RSpecRails/MinitestAssertions` autocorrection for quoted predicate symbols. ([@ydah])
 - Fix a false positive for `RspecRails/NegationBeValid` when use `to_not`. ([@ydah])
 - Fix false positives for `RSpecRails/TravelAround` when travel does not directly wrap the around example. ([@ydah])
 - Supporting correcting `assest_redirected_to` in `RSpec/Rails/MinitestAssertions`. ([@nzlaura])
