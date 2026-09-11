@@ -8,6 +8,7 @@ module RuboCop
       extend LazyLoader
 
       register_cop :AvoidSetupHook, "#{__dir__}/rspec_rails/avoid_setup_hook"
+      register_cop :HardcodedAbsentRecordId, "#{__dir__}/rspec_rails/hardcoded_absent_record_id"
       register_cop :HaveHttpStatus, "#{__dir__}/rspec_rails/have_http_status"
       register_cop :HttpStatus, "#{__dir__}/rspec_rails/http_status"
       register_cop :HttpStatusNameConsistency, "#{__dir__}/rspec_rails/http_status_name_consistency"

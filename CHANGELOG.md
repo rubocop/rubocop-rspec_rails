@@ -2,6 +2,7 @@
 
 ## Master (Unreleased)
 
+- Add new `RSpecRails/HardcodedAbsentRecordId` cop. ([@corsonknowles])
 - Speed up loading rubocop-rspec_rails by lazily loading only the cops needed for a run. This requires RuboCop 1.89.0+. ([@koic])
 - Fix offense message for `RSpecRails/HttpStatusNameConsistency` cop. ([@fatkodima])
 - Fix a false positive for `RspecRails/NegationBeValid` when use `to_not`. ([@ydah])
@@ -93,6 +94,7 @@
 [@akiomik]: https://github.com/akiomik
 [@anthony-robin]: https://github.com/anthony-robin
 [@bquorning]: https://github.com/bquorning
+[@corsonknowles]: https://github.com/corsonknowles
 [@corydiamand]: https://github.com/corydiamand
 [@eugeneius]: https://github.com/eugeneius
 [@fatkodima]: https://github.com/fatkodima

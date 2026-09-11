@@ -36,7 +36,7 @@ RSpec.describe 'cop lazy loading' do
       puts "loaded_cop_files=\#{loaded.size}"
     RUBY
 
-    expect(output).to include('registered=9', 'loaded_cop_files=0')
+    expect(output).to include('registered=10', 'loaded_cop_files=0')
   end
 
   it 'does not register a cop twice when its file is required directly' do

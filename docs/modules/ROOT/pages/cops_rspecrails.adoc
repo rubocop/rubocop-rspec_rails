@@ -42,6 +42,129 @@ end
 
 * https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/AvoidSetupHook
 
+[#rspecrailshardcodedabsentrecordid]
+== RSpecRails/HardcodedAbsentRecordId
+
+|===
+| Enabled by default | Safe | Supports autocorrection | Version Added | Version Changed
+
+| Pending
+| Yes
+| Always (Unsafe)
+| 2.33
+| -
+|===
+
+Checks for a hardcoded id standing in for an absent record.
+
+Auto-increment climbs across every example in a run and is not
+reclaimed by transactional rollback, so the counter eventually
+reaches the literal. From then on a real row occupies it, the lookup
+succeeds, and the example stops testing absence -- passing locally,
+where the counter is low, and failing in CI. A negative id cannot
+collide, because auto-increment never emits one.
+
+An id counts as standing in for an absent record when its own example
+group either expects absence (`ActiveRecord::RecordNotFound`, a
+`:not_found` response) or says so in its description. Both are read
+from the group the `let` is written in, not the whole file, so a
+shared id in an outer group is not attributed to a nested example
+that never uses it.
+
+The description has to name absence, not mismatch. A group saying the
+record belongs to someone else, or that an id is invalid, is about a
+row that exists.
+
+In a list, a literal sitting beside a real `record.id` also qualifies
+on its own: you would write another `record.id` if you wanted one
+that exists. A list only reads as record ids when every member is
+one, so `['story', '123', '']` is a format fixture and is skipped.
+
+Not offenses: a group that builds a record carrying that id, a
+`RecordNotFound` raised by reloading a row the example just deleted,
+a literal above `MaxId`, and a group pinning two scalar ids, which
+are usually pinned to differ from each other.
+
+[#safety-rspecrailshardcodedabsentrecordid]
+=== Safety
+
+Autocorrection is unsafe. `-1` is right for a primary key, but it
+also changes the value the example feeds to everything else, so an
+id matched against a stubbed request URI, a recorded cassette or an
+asserted error message needs those updated to match. Some codebases
+also reserve `-1` as a sentinel of their own, and an unsigned
+column rejects it outright.
+
+[#examples-rspecrailshardcodedabsentrecordid]
+=== Examples
+
+[source,ruby]
+----
+# bad
+context 'when the user does not exist' do
+  let(:user_id) { 123 }
+
+  it { expect { subject }.to raise_error(RecordNotFound) }
+end
+
+# bad - the literal is there precisely because no record has it
+let(:user_ids) { [user.id, other_user.id, 99_999] }
+
+# good - auto-increment never emits a negative id
+context 'when the user does not exist' do
+  let(:user_id) { -1 }
+
+  it { expect { subject }.to raise_error(RecordNotFound) }
+end
+
+# good - a deleted record's id is a reference, not a constant
+context 'when the user does not exist' do
+  let(:user_id) { deleted_user.id }
+end
+----
+
+[#allowednames_-__wise_id__-_default_-___-rspecrailshardcodedabsentrecordid]
+==== AllowedNames: ['wise_id'] (default: [])
+
+[source,ruby]
+----
+# good - a third-party identifier, not a primary key
+context 'when the transfer does not exist' do
+  let(:wise_id) { 5678 }
+end
+----
+
+[#maxid_-100000-_default_-rspecrailshardcodedabsentrecordid]
+==== MaxId: 100000 (default)
+
+[source,ruby]
+----
+# good - above MaxId the literal is a deliberate sentinel
+context 'when the user does not exist' do
+  let(:user_id) { 999_999 }
+end
+----
+
+[#configurable-attributes-rspecrailshardcodedabsentrecordid]
+=== Configurable attributes
+
+|===
+| Name | Default value | Configurable values
+
+| AllowedNames
+| `[]`
+| Array
+
+| MaxId
+| `100000`
+| Integer
+|===
+
+[#references-rspecrailshardcodedabsentrecordid]
+=== References
+
+* https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/HardcodedAbsentRecordId
+
 [#rspecrailshavehttpstatus]
 == RSpecRails/HaveHttpStatus
 
