@@ -30,12 +30,7 @@ module RuboCop
       #   RSpec.describe User, type: :common do
       #   end
       #
-      # @example `Inferences` configuration
-      #   # .rubocop.yml
-      #   # RSpecRails/InferredSpecType:
-      #   #   Inferences:
-      #   #     services: service
-      #
+      # @example `Inferences: {services: service}`
       #   # bad
       #   # spec/services/user_spec.rb
       #   RSpec.describe User, type: :service do
