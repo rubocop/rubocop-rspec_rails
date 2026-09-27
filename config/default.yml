@@ -95,6 +95,18 @@ RSpecRails/Timecop:
   VersionAdded: "<<next>>"
   SafeAutoCorrect: false
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/Timecop
+  SpecTypes:
+    - channel
+    - controller
+    - feature
+    - helper
+    - job
+    - mailer
+    - model
+    - request
+    - routing
+    - system
+    - view
 RSpecRails/ReceivePerformLater:
   Description: Prefer `have_enqueued_job` over `receive(:perform_later)`.
   Enabled: pending

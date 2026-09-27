@@ -39,9 +39,25 @@ module RuboCop
       # end
       # ```
       #
-      # Moreover, because `TimeHelpers` relies on Minitest teardown hooks,
-      # `rails_helper` must be required (instead of `spec_helper`), or a
-      # similar adapter layer must be in effect.
+      # Moreover, `TimeHelpers` undoes time travel in `after_teardown`, which
+      # rspec-rails only runs in example groups that include
+      # `RSpec::Rails::RailsExampleGroup`. Those groups are selected by their
+      # `type:` metadata, so this cop only inspects code that sits inside an
+      # example, or inside an example-level hook, of an example group carrying
+      # one of the `SpecTypes` types. Anywhere else, replacing `Timecop` with
+      # `TimeHelpers` would leak a frozen clock into the following examples.
+      #
+      # This also means `rails_helper` has to be required instead of
+      # `spec_helper`, or a similar adapter layer has to be in effect.
+      #
+      # `RSpec::Rails::RailsExampleGroup` can be included into a type of your
+      # own, in which case add that type to `SpecTypes`:
+      #
+      # ```ruby
+      # RSpec.configure do |config|
+      #   config.include RSpec::Rails::RailsExampleGroup, type: :service
+      # end
+      # ```
       #
       # @example
       #   # bad
@@ -122,8 +138,15 @@ module RuboCop
           )
         PATTERN
 
+        # @!method rails_example_group?(node)
+        def_node_matcher :rails_example_group?, <<~PATTERN
+          (block (send #rspec? #ExampleGroups.all ...
+            (hash <(pair (sym :type) (sym #spec_type?)) ...>)) ...)
+        PATTERN
+
         def on_const(node)
           return unless timecop_const?(node)
+          return unless inside_rails_example_group?(node)
 
           timecop_send(node.parent) do |message, arguments|
             return on_timecop_send(node.parent, message, arguments)
@@ -161,8 +184,7 @@ module RuboCop
         end
 
         def on_timecop_return(node, arguments)
-          message =
-            format(RETURN_MESSAGE, replacement: 'travel_back')
+          message = format(RETURN_MESSAGE, replacement: 'travel_back')
           add_offense(node, message: message) do |corrector|
             autocorrect_return(corrector, node, arguments)
           end
@@ -201,9 +223,17 @@ module RuboCop
         end
 
         def preferred_freeze_replacement
-          return 'travel_to(Time.now)' if target_rails_version < 5.2
+          target_rails_version < 5.2 ? 'travel_to(Time.now)' : 'freeze_time'
+        end
 
-          'freeze_time'
+        # `TimeHelpers` only reset in groups that run Minitest's teardown,
+        # which rspec-rails wires up through the group's `type:` metadata.
+        def inside_rails_example_group?(node)
+          node.each_ancestor(:block).any? { |g| rails_example_group?(g) }
+        end
+
+        def spec_type?(type)
+          Array(cop_config['SpecTypes']).include?(type.to_s)
         end
 
         # FIXME: shamelessly borrowed from rubocop-rspec's expect_output.rb
