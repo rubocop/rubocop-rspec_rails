@@ -138,10 +138,9 @@ module RuboCop
           )
         PATTERN
 
-        # @!method rails_example_group?(node)
-        def_node_matcher :rails_example_group?, <<~PATTERN
-          (block (send #rspec? #ExampleGroups.all ...
-            (hash <(pair (sym :type) (sym #spec_type?)) ...>)) ...)
+        # @!method rails_group?(node, types)
+        def_node_matcher :rails_group?, <<~PATTERN
+          (block (send #rspec? #ExampleGroups.all ... (hash <(pair (sym :type) (sym %1)) ...>)) ...)
         PATTERN
 
         def on_const(node)
@@ -226,14 +225,13 @@ module RuboCop
           target_rails_version < 5.2 ? 'travel_to(Time.now)' : 'freeze_time'
         end
 
-        # `TimeHelpers` only reset in groups that run Minitest's teardown,
-        # which rspec-rails wires up through the group's `type:` metadata.
         def inside_rails_example_group?(node)
-          node.each_ancestor(:block).any? { |g| rails_example_group?(g) }
+          node.each_ancestor(:block)
+            .any? { |group| rails_group?(group, spec_types) }
         end
 
-        def spec_type?(type)
-          Array(cop_config['SpecTypes']).include?(type.to_s)
+        def spec_types
+          @spec_types ||= Array(cop_config['SpecTypes']).to_set(&:to_sym)
         end
 
         # FIXME: shamelessly borrowed from rubocop-rspec's expect_output.rb
