@@ -1,27 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe RuboCop::Cop::RSpecRails::Timecop, :config do
-  shared_context 'with Rails 5.1' do
-    let(:rails_version) { 5.1 }
-  end
-
-  shared_context 'with Rails 5.2' do
-    let(:rails_version) { 5.2 }
-  end
-
-  shared_context 'with Rails 6.0' do
-    let(:rails_version) { 6.0 }
-  end
-
-  shared_context 'with Rails 6.1' do
-    let(:rails_version) { 6.1 }
-  end
-
-  shared_context 'with Rails 7.0' do
-    let(:rails_version) { 7.0 }
-  end
-
-  include_context 'with Rails 7.0'
+  let(:rails_version) { 7.1 }
 
   # `TimeHelpers` only reset between the examples of a group that rspec-rails
   # recognises by its `type:` metadata, and they are only available inside an
@@ -95,60 +75,46 @@ RSpec.describe RuboCop::Cop::RSpecRails::Timecop, :config do
   end
 
   describe '.freeze' do
-    shared_examples 'flags and corrects to' do |replacement:|
-      context 'when given no block' do
-        it "flags, and corrects to `#{replacement}`" do
-          expect_offense(<<~RUBY)
-            RSpec.describe Foo, type: :model do
-              it do
-                Timecop.freeze
-                ^^^^^^^^^^^^^^ Use `#{replacement}` instead of `Timecop.freeze`
-              end
+    context 'when given no block' do
+      it 'flags, and corrects to `freeze_time`' do
+        expect_offense(<<~RUBY)
+          RSpec.describe Foo, type: :model do
+            it do
+              Timecop.freeze
+              ^^^^^^^^^^^^^^ Use `freeze_time` instead of `Timecop.freeze`
             end
-          RUBY
+          end
+        RUBY
 
-          expect_correction(<<~RUBY)
-            RSpec.describe Foo, type: :model do
-              it do
-                #{replacement}
-              end
+        expect_correction(<<~RUBY)
+          RSpec.describe Foo, type: :model do
+            it do
+              freeze_time
             end
-          RUBY
-        end
-      end
-
-      context 'when given a block' do
-        it "flags, and corrects to `#{replacement}`" do
-          expect_offense(<<~RUBY)
-            RSpec.describe Foo, type: :model do
-              it do
-                Timecop.freeze { assert true }
-                ^^^^^^^^^^^^^^ Use `#{replacement}` instead of `Timecop.freeze`
-              end
-            end
-          RUBY
-
-          expect_correction(<<~RUBY)
-            RSpec.describe Foo, type: :model do
-              it do
-                #{replacement} { assert true }
-              end
-            end
-          RUBY
-        end
+          end
+        RUBY
       end
     end
 
-    context 'when Rails < 5.2' do
-      include_context 'with Rails 5.1'
-      it_behaves_like 'flags and corrects to',
-                      replacement: 'travel_to(Time.now)'
-    end
+    context 'when given a block' do
+      it 'flags, and corrects to `freeze_time`' do
+        expect_offense(<<~RUBY)
+          RSpec.describe Foo, type: :model do
+            it do
+              Timecop.freeze { assert true }
+              ^^^^^^^^^^^^^^ Use `freeze_time` instead of `Timecop.freeze`
+            end
+          end
+        RUBY
 
-    context 'with Rails 5.2+' do
-      include_context 'with Rails 5.2'
-      it_behaves_like 'flags and corrects to',
-                      replacement: 'freeze_time'
+        expect_correction(<<~RUBY)
+          RSpec.describe Foo, type: :model do
+            it do
+              freeze_time { assert true }
+            end
+          end
+        RUBY
+      end
     end
 
     context 'with arguments' do
@@ -157,7 +123,7 @@ RSpec.describe RuboCop::Cop::RSpecRails::Timecop, :config do
     end
   end
 
-  shared_examples 'return prefers' do
+  describe '.return' do
     context 'when given no block' do
       it 'flags, and corrects to `travel_back`' do
         expect_offense(<<~RUBY)
@@ -178,32 +144,9 @@ RSpec.describe RuboCop::Cop::RSpecRails::Timecop, :config do
         RUBY
       end
     end
-  end
 
-  describe '.return' do
-    context 'with Rails < 6.1' do
-      include_context 'with Rails 6.0'
-      it_behaves_like 'return prefers'
-
-      it 'flags, but does not correct return with a block' do
-        expect_offense(<<~RUBY)
-          RSpec.describe Foo, type: :model do
-            it do
-              Timecop.return { assert true }
-              ^^^^^^^^^^^^^^ Use `travel_back` instead of `Timecop.return`
-            end
-          end
-        RUBY
-
-        expect_no_corrections
-      end
-    end
-
-    context 'with Rails 6.1+' do
-      include_context 'with Rails 6.1'
-      it_behaves_like 'return prefers'
-
-      it 'flags, and corrects return with a block' do
+    context 'when given a block' do
+      it 'flags, and corrects to `travel_back`' do
         expect_offense(<<~RUBY)
           RSpec.describe Foo, type: :model do
             it do
@@ -266,6 +209,59 @@ RSpec.describe RuboCop::Cop::RSpecRails::Timecop, :config do
           end
         end
       RUBY
+    end
+  end
+
+  describe 'the Rails version' do
+    shared_examples 'an inspected file' do
+      it 'flags' do
+        expect_offense(<<~RUBY)
+          RSpec.describe Foo, type: :model do
+            it do
+              Timecop.freeze
+              ^^^^^^^^^^^^^^ Use `freeze_time` instead of `Timecop.freeze`
+            end
+          end
+        RUBY
+      end
+    end
+
+    context 'with Rails 7.0' do
+      let(:rails_version) { 7.0 }
+
+      it 'adds no offenses' do
+        expect_no_offenses(<<~RUBY)
+          RSpec.describe Foo, type: :model do
+            it do
+              Timecop.freeze
+            end
+          end
+        RUBY
+      end
+    end
+
+    context 'when `TargetRailsVersion` overrides an older lock file' do
+      let(:rails_version) { 7.1 }
+      let(:gem_versions) { { 'railties' => '6.1' } }
+
+      it_behaves_like 'an inspected file'
+    end
+
+    context 'when only the lock file knows the version' do
+      let(:rails_version) { false }
+      let(:gem_versions) { { 'railties' => '7.1' } }
+
+      it_behaves_like 'an inspected file'
+    end
+
+    context 'when the version is unknown' do
+      let(:rails_version) { false }
+
+      before do
+        allow(config).to receive(:gem_versions_in_target).and_return({})
+      end
+
+      it_behaves_like 'an inspected file'
     end
   end
 

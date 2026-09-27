@@ -11,15 +11,18 @@ module RuboCop
       # should be replaced with `travel`. Likewise, where a `time` has been
       # passed to `freeze`, it should be replaced with `travel_to`.
       #
+      # `travel` accepts an `ActiveSupport::Duration`, and is a shorthand for
+      # `travel_to(Time.now + duration)`, so it already leaves the clock
+      # frozen, exactly as `Timecop.freeze(duration)` does. Neither call is
+      # offered as an autocorrection, because a duration and a time are
+      # indistinguishable in the source while needing different replacements.
+      #
       # `Timecop.scale` should be replaced by explicitly calling `travel` or
       # `travel_to` with the expected `durations` or `times`, respectively,
       # rather than relying on allowing time to continue to flow.
       #
-      # `Timecop.return` should be replaced with `travel_back`, when used
-      # without a block. `travel_back` accepts a block starting with Rails 6.1.
-      # For earlier Rails, where `return` is used with a block, it should
-      # be replaced by explicitly calling `freeze_time` with a block, and
-      # passing the `time` to temporarily return to.
+      # `Timecop.return` should be replaced with `travel_back`, with or
+      # without a block.
       #
       # `Timecop.travel` should be replaced by `travel` or `travel_to` when
       # passed a `duration` or `time`, respectively. As with `Timecop.scale`,
@@ -28,6 +31,20 @@ module RuboCop
       #
       # Only these four calls are flagged. A bare `Timecop` reference, or any
       # other message sent to it, is left alone.
+      #
+      # ## Sub-second precision
+      #
+      # `Timecop` keeps the microseconds of the time it is given, while
+      # `travel`, `travel_to` and `freeze_time` set them to zero unless
+      # `with_usec: true` is passed. Add that keyword wherever a test depends
+      # on the fractional part of a second. It is available from Rails 7.1.
+      #
+      # ## Rails version
+      #
+      # The cop only runs on Rails 7.1 and newer, where every replacement it
+      # suggests exists. The version is taken from `TargetRailsVersion`, then
+      # from the `railties` entry of the lock file, and a current Rails is
+      # assumed when neither is available.
       #
       # ## RSpec Caveats
       #
@@ -109,10 +126,10 @@ module RuboCop
       class Timecop < RuboCop::Cop::RSpec::Base
         extend AutoCorrector
 
-        FREEZE_MESSAGE = 'Use `%<replacement>s` instead of `Timecop.freeze`'
+        FREEZE_MESSAGE = 'Use `freeze_time` instead of `Timecop.freeze`'
         FREEZE_WITH_ARGUMENTS_MESSAGE =
           'Use `travel` or `travel_to` instead of `Timecop.freeze`'
-        RETURN_MESSAGE = 'Use `%<replacement>s` instead of `Timecop.return`'
+        RETURN_MESSAGE = 'Use `travel_back` instead of `Timecop.return`'
         FLOW_ADDENDUM =
           'If you need time to keep flowing, simulate it by travelling again.'
         TRAVEL_MESSAGE =
@@ -123,6 +140,7 @@ module RuboCop
           "#{FLOW_ADDENDUM}"
 
         RESTRICT_ON_SEND = %i[freeze return scale travel].to_set
+        MINIMUM_RAILS_VERSION = Gem::Version.new('7.1')
 
         # @!method timecop_const?(node)
         def_node_matcher :timecop_const?, <<~PATTERN
@@ -143,6 +161,8 @@ module RuboCop
         PATTERN
 
         def on_send(node)
+          return unless rails_version >= MINIMUM_RAILS_VERSION
+
           timecop_send(node) do |message, arguments|
             on_timecop_send(node, message, arguments)
           end
@@ -166,21 +186,18 @@ module RuboCop
         end
 
         def on_timecop_freeze(node, arguments)
-          if arguments.empty?
-            message =
-              format(FREEZE_MESSAGE, replacement: preferred_freeze_replacement)
-            add_offense(node, message: message) do |corrector|
-              autocorrect_freeze(corrector, node)
-            end
-          else
-            add_offense(node, message: FREEZE_WITH_ARGUMENTS_MESSAGE)
+          unless arguments.empty?
+            return add_offense(node, message: FREEZE_WITH_ARGUMENTS_MESSAGE)
+          end
+
+          add_offense(node, message: FREEZE_MESSAGE) do |corrector|
+            corrector.replace(receiver_and_message_range(node), 'freeze_time')
           end
         end
 
-        def on_timecop_return(node, arguments)
-          message = format(RETURN_MESSAGE, replacement: 'travel_back')
-          add_offense(node, message: message) do |corrector|
-            autocorrect_return(corrector, node, arguments)
+        def on_timecop_return(node, _arguments)
+          add_offense(node, message: RETURN_MESSAGE) do |corrector|
+            corrector.replace(receiver_and_message_range(node), 'travel_back')
           end
         end
 
@@ -192,32 +209,15 @@ module RuboCop
           add_offense(node, message: TRAVEL_MESSAGE)
         end
 
-        def autocorrect_freeze(corrector, node)
-          corrector.replace(receiver_and_message_range(node),
-                            preferred_freeze_replacement)
-        end
-
-        def autocorrect_return(corrector, node, _arguments)
-          return if given_block?(node) && !supports_return_with_block?
-
-          corrector.replace(receiver_and_message_range(node), 'travel_back')
-        end
-
-        def given_block?(node)
-          node.parent.block_type? && node.parent.send_node == node
-        end
-
-        # travel_back { ... } was introduced in Rails 6.1
-        def supports_return_with_block?
-          target_rails_version >= 6.1
-        end
-
         def receiver_and_message_range(node)
           node.source_range.with(end_pos: node.location.selector.end_pos)
         end
 
-        def preferred_freeze_replacement
-          target_rails_version < 5.2 ? 'travel_to(Time.now)' : 'freeze_time'
+        # `TargetRailsVersion` wins, then the lock file, then a current Rails
+        def rails_version
+          version = config.for_all_cops['TargetRailsVersion'] ||
+            target_gem_version('railties') || MINIMUM_RAILS_VERSION
+          Gem::Version.new(version.to_s)
         end
 
         def inside_rails_example_group?(node)
