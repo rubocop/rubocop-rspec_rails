@@ -42,6 +42,45 @@ end
 
 * https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/AvoidSetupHook
 
+[#rspecrailsfilefixture]
+== RSpecRails/FileFixture
+
+|===
+| Enabled by default | Safe | Supports autocorrection | Version Added | Version Changed
+
+| Pending
+| No
+| No
+| 2.33
+| -
+|===
+
+Prefer `file_fixture` over hardcoded paths into `spec/fixtures`.
+
+[#safety-rspecrailsfilefixture]
+=== Safety
+
+`file_fixture` uses the configured `file_fixture_path`, which defaults
+to `spec/fixtures/files`. A file under `spec/fixtures` may need to be
+moved or `file_fixture_path` configured before replacing the path.
+
+[#examples-rspecrailsfilefixture]
+=== Examples
+
+[source,ruby]
+----
+# bad
+Rails.root.join('spec', 'fixtures', 'files', 'example.pdf')
+
+# good
+file_fixture('example.pdf')
+----
+
+[#references-rspecrailsfilefixture]
+=== References
+
+* https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/FileFixture
+
 [#rspecrailshavehttpstatus]
 == RSpecRails/HaveHttpStatus
 
