@@ -7,7 +7,7 @@ RSpecRails:
     - "**/spec/**/*"
 
 RSpecRails/AvoidSetupHook:
-  Description: Checks that tests use RSpec `before` hook over Rails `setup` method.
+  Description: Checks that tests use RSpec `before` instead of Rails `setup`.
   Enabled: pending
   VersionAdded: '2.4'
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/AvoidSetupHook
@@ -65,7 +65,7 @@ RSpecRails/InferredSpecType:
     views: view
 
 RSpecRails/MinitestAssertions:
-  Description: Check if using Minitest-like matchers.
+  Description: Detects Minitest-like matchers.
   Enabled: pending
   VersionAdded: '2.17'
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/MinitestAssertions
@@ -90,7 +90,7 @@ RSpecRails/ReceivePerformLater:
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/ReceivePerformLater
 
 RSpecRails/TravelAround:
-  Description: Prefer to travel in `before` rather than `around`.
+  Description: Checks for time travel helpers in `around` hooks.
   Enabled: pending
   Safe: false
   VersionAdded: '2.19'

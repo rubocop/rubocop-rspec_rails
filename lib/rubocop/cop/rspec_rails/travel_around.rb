@@ -3,7 +3,7 @@
 module RuboCop
   module Cop
     module RSpecRails
-      # Prefer to travel in `before` rather than `around`.
+      # Checks for time travel helpers in `around` hooks.
       #
       # @safety
       #   This cop is unsafe because the automatic `travel_back` is only run
