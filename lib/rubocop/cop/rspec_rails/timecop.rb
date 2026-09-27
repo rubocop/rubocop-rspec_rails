@@ -26,7 +26,8 @@ module RuboCop
       # rather than relying on time continuing to flow, it should be travelled
       # to explicitly.
       #
-      # All other usages of `Timecop` are similarly disallowed.
+      # Only these four calls are flagged. A bare `Timecop` reference, or any
+      # other message sent to it, is left alone.
       #
       # ## RSpec Caveats
       #
@@ -60,9 +61,6 @@ module RuboCop
       # ```
       #
       # @example
-      #   # bad
-      #   Timecop
-      #
       #   # bad
       #   Timecop.freeze
       #   Timecop.freeze(duration)
@@ -123,7 +121,8 @@ module RuboCop
         SCALE_MESSAGE =
           'Use `travel` or `travel_to` instead of `Timecop.scale`. ' \
           "#{FLOW_ADDENDUM}"
-        MSG = 'Use `ActiveSupport::Testing::TimeHelpers` instead of `Timecop`'
+
+        RESTRICT_ON_SEND = %i[freeze return scale travel].to_set
 
         # @!method timecop_const?(node)
         def_node_matcher :timecop_const?, <<~PATTERN
@@ -143,21 +142,17 @@ module RuboCop
           (block (send #rspec? #ExampleGroups.all ... (hash <(pair (sym :type) (sym %1)) ...>)) ...)
         PATTERN
 
-        def on_const(node)
-          return unless timecop_const?(node)
-          return unless inside_rails_example_group?(node)
-
-          timecop_send(node.parent) do |message, arguments|
-            return on_timecop_send(node.parent, message, arguments)
+        def on_send(node)
+          timecop_send(node) do |message, arguments|
+            on_timecop_send(node, message, arguments)
           end
-
-          add_offense(node)
         end
 
         private
 
         def on_timecop_send(node, message, arguments)
           return unless inside_example_scope?(node)
+          return unless inside_rails_example_group?(node)
 
           case message
           when :freeze then on_timecop_freeze(node, arguments)

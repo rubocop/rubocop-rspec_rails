@@ -585,7 +585,8 @@ passed a `duration` or `time`, respectively. As with `Timecop.scale`,
 rather than relying on time continuing to flow, it should be travelled
 to explicitly.
 
-All other usages of `Timecop` are similarly disallowed.
+Only these four calls are flagged. A bare `Timecop` reference, or any
+other message sent to it, is left alone.
 
 ## RSpec Caveats
 
@@ -623,9 +624,6 @@ end
 
 [source,ruby]
 ----
-# bad
-Timecop
-
 # bad
 Timecop.freeze
 Timecop.freeze(duration)

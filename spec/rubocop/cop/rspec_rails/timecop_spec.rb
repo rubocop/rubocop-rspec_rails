@@ -27,29 +27,29 @@ RSpec.describe RuboCop::Cop::RSpecRails::Timecop, :config do
   # recognises by its `type:` metadata, and they are only available inside an
   # example or an example-level hook. Every snippet is wrapped accordingly.
 
-  shared_examples 'flags to constant, and does not correct' do |usage:|
-    let(:constant) { usage.include?('::Timecop') ? '::Timecop' : 'Timecop' }
-
-    it 'flags, and does not correct' do
-      expect_offense(<<~RUBY, constant: constant)
+  describe 'the constant on its own' do
+    it 'adds no offenses' do
+      expect_no_offenses(<<~RUBY)
         RSpec.describe Foo, type: :model do
           it do
-            #{usage}
-            ^{constant} Use `ActiveSupport::Testing::TimeHelpers` instead of `Timecop`
+            Timecop
           end
         end
       RUBY
-
-      expect_no_corrections
     end
   end
 
-  it_behaves_like 'flags to constant, and does not correct',
-                  usage: 'Timecop'
-
   describe '.*' do
-    it_behaves_like 'flags to constant, and does not correct',
-                    usage: 'Timecop.foo'
+    it 'adds no offenses for a message it cannot migrate' do
+      expect_no_offenses(<<~RUBY)
+        RSpec.describe Foo, type: :model do
+          it do
+            Timecop.foo
+            Timecop.safe_mode = true
+          end
+        end
+      RUBY
+    end
   end
 
   shared_examples 'flags send, and does not correct' do |usage:,
@@ -237,8 +237,24 @@ RSpec.describe RuboCop::Cop::RSpecRails::Timecop, :config do
   end
 
   describe '::Timecop' do
-    it_behaves_like 'flags to constant, and does not correct',
-                    usage: '::Timecop'
+    it 'flags, and corrects a call on the top level constant' do
+      expect_offense(<<~RUBY)
+        RSpec.describe Foo, type: :model do
+          it do
+            ::Timecop.freeze
+            ^^^^^^^^^^^^^^^^ Use `freeze_time` instead of `Timecop.freeze`
+          end
+        end
+      RUBY
+
+      expect_correction(<<~RUBY)
+        RSpec.describe Foo, type: :model do
+          it do
+            freeze_time
+          end
+        end
+      RUBY
+    end
   end
 
   describe 'Foo::Timecop' do
@@ -246,7 +262,7 @@ RSpec.describe RuboCop::Cop::RSpecRails::Timecop, :config do
       expect_no_offenses(<<~RUBY)
         RSpec.describe Foo, type: :model do
           it do
-            Foo::Timecop
+            Foo::Timecop.freeze
           end
         end
       RUBY
@@ -482,17 +498,6 @@ RSpec.describe RuboCop::Cop::RSpecRails::Timecop, :config do
           end
         end
       RUBY
-    end
-
-    it 'still flags the constant on its own' do
-      expect_offense(<<~RUBY)
-        RSpec.describe Foo, type: :model do
-          Timecop.safe_mode = true
-          ^^^^^^^ Use `ActiveSupport::Testing::TimeHelpers` instead of `Timecop`
-        end
-      RUBY
-
-      expect_no_corrections
     end
   end
 end
