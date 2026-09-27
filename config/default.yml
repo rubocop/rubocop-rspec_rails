@@ -93,7 +93,6 @@ RSpecRails/Timecop:
   Description: Enforces use of ActiveSupport TimeHelpers instead of Timecop.
   Enabled: pending
   VersionAdded: "<<next>>"
-  SafeAutoCorrect: false
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/Timecop
   SpecTypes:
     - channel
