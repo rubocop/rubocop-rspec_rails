@@ -570,15 +570,18 @@ without arguments. Where a `duration` has been passed to `freeze`, it
 should be replaced with `travel`. Likewise, where a `time` has been
 passed to `freeze`, it should be replaced with `travel_to`.
 
+`travel` accepts an `ActiveSupport::Duration`, and is a shorthand for
+`travel_to(Time.now + duration)`, so it already leaves the clock
+frozen, exactly as `Timecop.freeze(duration)` does. Neither call is
+offered as an autocorrection, because a duration and a time are
+indistinguishable in the source while needing different replacements.
+
 `Timecop.scale` should be replaced by explicitly calling `travel` or
 `travel_to` with the expected `durations` or `times`, respectively,
 rather than relying on allowing time to continue to flow.
 
-`Timecop.return` should be replaced with `travel_back`, when used
-without a block. `travel_back` accepts a block starting with Rails 6.1.
-For earlier Rails, where `return` is used with a block, it should
-be replaced by explicitly calling `freeze_time` with a block, and
-passing the `time` to temporarily return to.
+`Timecop.return` should be replaced with `travel_back`, with or
+without a block.
 
 `Timecop.travel` should be replaced by `travel` or `travel_to` when
 passed a `duration` or `time`, respectively. As with `Timecop.scale`,
@@ -587,6 +590,20 @@ to explicitly.
 
 Only these four calls are flagged. A bare `Timecop` reference, or any
 other message sent to it, is left alone.
+
+## Sub-second precision
+
+`Timecop` keeps the microseconds of the time it is given, while
+`travel`, `travel_to` and `freeze_time` set them to zero unless
+`with_usec: true` is passed. Add that keyword wherever a test depends
+on the fractional part of a second. It is available from Rails 7.1.
+
+## Rails version
+
+The cop only runs on Rails 7.1 and newer, where every replacement it
+suggests exists. The version is taken from `TargetRailsVersion`, then
+from the `railties` entry of the lock file, and a current Rails is
+assumed when neither is available.
 
 ## RSpec Caveats
 
