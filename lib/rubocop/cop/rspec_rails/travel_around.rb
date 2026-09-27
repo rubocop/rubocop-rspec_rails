@@ -5,13 +5,24 @@ module RuboCop
     module RSpecRails
       # Checks for time travel helpers in `around` hooks.
       #
-      # @safety
-      #   This cop is unsafe because the automatic `travel_back` is only run
-      #   on test cases that are considered as Rails related.
+      # In Rails example groups, `freeze_time` in a `before` hook does not need
+      # a block: Rails' `after_teardown` calls `travel_back` after each example.
+      # This also allows an example to use block-form time travel, which Rails
+      # does not allow inside another time travel block.
+      # See https://api.rubyonrails.org/classes/ActiveSupport/Testing/TimeHelpers.html
       #
-      #   And also, this cop's autocorrection is unsafe because the order of
-      #   execution will change if other steps exist before traveling in
-      #   `around`.
+      # @safety
+      #   The automatic `travel_back` requires both
+      #   `ActiveSupport::Testing::TimeHelpers` and RSpec Rails' lifecycle
+      #   hooks. RSpec Rails applies those hooks to example groups with Rails
+      #   `type:` metadata. File paths set that metadata only when
+      #   `infer_spec_type_from_file_location!` is enabled. In a plain RSpec
+      #   group that only includes TimeHelpers, use a block or call
+      #   `travel_back` explicitly.
+      #   See https://rspec.info/features/7-1/rspec-rails/directory-structure/
+      #
+      #   Autocorrection can change execution order: `around` starts before
+      #   all `before` hooks, while `before` runs in normal hook order.
       #
       # @example
       #   # bad
