@@ -557,7 +557,7 @@ expect { do_something }
 
 | Pending
 | Yes
-| Always (Unsafe)
+| Always
 | <<next>>
 | -
 |===
