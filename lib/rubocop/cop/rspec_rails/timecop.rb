@@ -92,7 +92,7 @@ module RuboCop
       #   travel_to(time)
       #   travel(duration) { assert true }
       #   travel_to(time) { assert true }
-      class Timecop < ::RuboCop::Cop::RSpec::Base
+      class Timecop < RuboCop::Cop::RSpec::Base
         extend AutoCorrector
 
         FREEZE_MESSAGE = 'Use `%<replacement>s` instead of `Timecop.freeze`'
@@ -142,7 +142,9 @@ module RuboCop
           when :return then on_timecop_return(node, arguments)
           when :scale  then on_timecop_scale(node, arguments)
           when :travel then on_timecop_travel(node, arguments)
-          else add_offense(node)
+          # :nocov:
+          else nil # rubocop:disable Style/EmptyElse
+            # :nocov:
           end
         end
 
@@ -151,7 +153,7 @@ module RuboCop
             message =
               format(FREEZE_MESSAGE, replacement: preferred_freeze_replacement)
             add_offense(node, message: message) do |corrector|
-              autocorrect_freeze(corrector, node, arguments)
+              autocorrect_freeze(corrector, node)
             end
           else
             add_offense(node, message: FREEZE_WITH_ARGUMENTS_MESSAGE)
@@ -174,9 +176,7 @@ module RuboCop
           add_offense(node, message: TRAVEL_MESSAGE)
         end
 
-        def autocorrect_freeze(corrector, node, arguments)
-          return unless arguments.empty?
-
+        def autocorrect_freeze(corrector, node)
           corrector.replace(receiver_and_message_range(node),
                             preferred_freeze_replacement)
         end
@@ -188,7 +188,7 @@ module RuboCop
         end
 
         def given_block?(node)
-          node.parent&.block_type? && node.parent.send_node == node
+          node.parent.block_type? && node.parent.send_node == node
         end
 
         # travel_back { ... } was introduced in Rails 6.1
