@@ -12,6 +12,7 @@
 - Add new `RSpecRails/ReceivePerformLater` cop. ([@ydah])
 - Fix `RSpecRails/ReceivePerformLater` offense range to exclude chains after the expectation. ([@ydah])
 - Fix a false positive for `RSpecRails/ReceivePerformLater` when `receive(:perform_later)` is used inside another matcher. ([@ydah])
+- Support `described_class` for `RSpecRails/ReceivePerformLater`. ([@ydah])
 - Fix `RSpecRails/TravelAround` autocorrection to keep the indentation of the surrounding `around` block. ([@eugeneius])
 - Fix `RSpecRails/ReceivePerformLater` offense messages for negative expectations. ([@ydah])
 

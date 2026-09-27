@@ -13,6 +13,17 @@ RSpec.describe RuboCop::Cop::RSpecRails::ReceivePerformLater do
   end
 
   it 'registers an offense when using ' \
+     '`expect(described_class).to receive(:perform_later)`' do
+    expect_offense(<<~RUBY)
+      it 'enqueues the described job' do
+        expect(described_class).to receive(:perform_later)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `expect { ... }.to have_enqueued_job(described_class)` over `expect(described_class).to receive(:perform_later)`.
+        do_something
+      end
+    RUBY
+  end
+
+  it 'registers an offense when using ' \
      '`expect(Job).not_to receive(:perform_later)`' do
     expect_offense(<<~RUBY)
       it 'does not enqueue a job' do
@@ -75,6 +86,18 @@ RSpec.describe RuboCop::Cop::RSpecRails::ReceivePerformLater do
         do_something
         expect(MyJob).to have_received(:perform_later)
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `expect { ... }.to have_enqueued_job(MyJob)` over `expect(MyJob).to have_received(:perform_later)`.
+      end
+    RUBY
+  end
+
+  it 'registers an offense when using ' \
+     '`expect(described_class).to have_received(:perform_later)`' do
+    expect_offense(<<~RUBY)
+      it 'enqueues the described job' do
+        allow(described_class).to receive(:perform_later)
+        do_something
+        expect(described_class).to have_received(:perform_later)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `expect { ... }.to have_enqueued_job(described_class)` over `expect(described_class).to have_received(:perform_later)`.
       end
     RUBY
   end
