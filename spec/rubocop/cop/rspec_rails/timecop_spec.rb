@@ -195,4 +195,33 @@ RSpec.describe RuboCop::Cop::RSpecRails::Timecop, :config do
       RUBY
     end
   end
+
+  describe 'Rails example groups' do
+    it 'only detects inside RSpec DSL' do
+      expect_offense(<<~RUBY)
+        RSpec.describe do
+          before do
+            Timecop.freeze
+            ^^^^^^^^^^^^^^ Use `freeze_time` instead of `Timecop.freeze`
+            Timecop.return
+            ^^^^^^^^^^^^^^ Use `travel_back` instead of `Timecop.return`
+            Timecop.scale(factor)
+            ^^^^^^^^^^^^^^^^^^^^^ Use `travel` or `travel_to` instead of `Timecop.scale`. If you need time to keep flowing, simulate it by travelling again.
+            Timecop.travel(time)
+            ^^^^^^^^^^^^^^^^^^^^ Use `travel` or `travel_to` instead of `Timecop.travel`. If you need time to keep flowing, simulate it by travelling again.
+          end
+          it do
+            Timecop.freeze
+            ^^^^^^^^^^^^^^ Use `freeze_time` instead of `Timecop.freeze`
+            Timecop.return
+            ^^^^^^^^^^^^^^ Use `travel_back` instead of `Timecop.return`
+            Timecop.scale(factor)
+            ^^^^^^^^^^^^^^^^^^^^^ Use `travel` or `travel_to` instead of `Timecop.scale`. If you need time to keep flowing, simulate it by travelling again.
+            Timecop.travel(time)
+            ^^^^^^^^^^^^^^^^^^^^ Use `travel` or `travel_to` instead of `Timecop.travel`. If you need time to keep flowing, simulate it by travelling again.
+          end
+        end
+      RUBY
+    end
+  end
 end

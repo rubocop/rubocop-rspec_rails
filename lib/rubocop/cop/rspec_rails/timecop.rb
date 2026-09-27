@@ -92,7 +92,7 @@ module RuboCop
       #   travel_to(time)
       #   travel(duration) { assert true }
       #   travel_to(time) { assert true }
-      class Timecop < ::RuboCop::Cop::Base
+      class Timecop < ::RuboCop::Cop::RSpec::Base
         extend AutoCorrector
 
         FREEZE_MESSAGE = 'Use `%<replacement>s` instead of `Timecop.freeze`'
@@ -135,6 +135,8 @@ module RuboCop
         private
 
         def on_timecop_send(node, message, arguments)
+          return unless inside_example_scope?(node)
+
           case message
           when :freeze then on_timecop_freeze(node, arguments)
           when :return then on_timecop_return(node, arguments)
@@ -202,6 +204,15 @@ module RuboCop
           return 'travel_to(Time.now)' if target_rails_version < 5.2
 
           'freeze_time'
+        end
+
+        # FIXME: shamelessly borrowed from rubocop-rspec's expect_output.rb
+        def inside_example_scope?(node)
+          return false if node.nil? || example_group?(node)
+          return true if example?(node)
+          return RuboCop::RSpec::Hook.new(node).example? if hook?(node)
+
+          inside_example_scope?(node.parent)
         end
       end
     end
