@@ -99,6 +99,7 @@ RSpecRails/ReceivePerformLater:
 RSpecRails/Timecop:
   Description: Enforces use of ActiveSupport TimeHelpers instead of Timecop.
   Enabled: pending
+  SafeAutoCorrect: false
   VersionAdded: "<<next>>"
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/Timecop
   SpecTypes:
