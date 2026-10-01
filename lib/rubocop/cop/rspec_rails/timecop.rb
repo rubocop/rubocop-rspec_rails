@@ -100,28 +100,30 @@ module RuboCop
       #   travel(duration) { expect(mccomb).to have_vanished }
       #   travel_to(time) { expect(marty).to see_a_hoverboard }
       #
-      # @example
+      # @example `SpecTypes` configuration
+      #   `TimeHelpers` would leak a frozen clock into the subsequent examples,
+      #    so the cop only inspects those example groups that include the
+      #   `RSpec::Rails::RailsExampleGroup`, which runs the `after_teardown`.
       #
-      #   in `after_teardown`, which
-      # rspec-rails only runs in example groups that include
-      # `RSpec::Rails::RailsExampleGroup`. Those groups are selected by their
-      # `type:` metadata, so this cop only inspects code that sits inside an
-      # example, or inside an example-level hook, of an example group carrying
-      # one of the `SpecTypes` types. Anywhere else, replacing `Timecop` with
-      # `TimeHelpers` would leak a frozen clock into the following examples.
+      #   Configure the cop to inspect custom types:
       #
-      # This also means `rails_helper` has to be required instead of
-      # `spec_helper`, or a similar adapter layer has to be in effect.
+      #   # .rubocop.yml
+      #   RSpecRails/Timecop:
+      #     SpecTypes:
+      #       - service
       #
-      # `RSpec::Rails::RailsExampleGroup` can be included into a type of your
-      # own, in which case add that type to `SpecTypes`:
+      #   # spec/rails_helper.rb
+      #   RSpec.configure do |config|
+      #     config.include RSpec::Rails::RailsExampleGroup, type: :service
+      #   end
       #
-      # ```ruby
-      # RSpec.configure do |config|
-      #   config.include RSpec::Rails::RailsExampleGroup, type: :service
-      # end
-      # ```
-      #
+      #   # bad
+      #   RSpec.describe 'TerminationService', type: :service do
+      #     it 'travels to the past' do
+      #       Timecop.travel("1984-05-12")
+      #       expect(t800).to seek_sarah
+      #     end
+      #   end
       class Timecop < RuboCop::Cop::RSpec::Base
         extend AutoCorrector
 
