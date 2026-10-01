@@ -557,7 +557,7 @@ expect { do_something }
 
 | Pending
 | Yes
-| Always
+| Always (Unsafe)
 | <<next>>
 | -
 |===
@@ -565,6 +565,7 @@ expect { do_something }
 Enforces use of ActiveSupport TimeHelpers instead of Timecop.
 
 ## Migration
+
 `Timecop.freeze` should be replaced with `freeze_time` when used
 without arguments. Where a `duration` has been passed to `freeze`, it
 should be replaced with `travel`. Likewise, where a `time` has been
@@ -588,16 +589,6 @@ passed a `duration` or `time`, respectively. As with `Timecop.scale`,
 rather than relying on time continuing to flow, it should be travelled
 to explicitly.
 
-Only these four calls are flagged. A bare `Timecop` reference, or any
-other message sent to it, is left alone.
-
-## Sub-second precision
-
-`Timecop` keeps the microseconds of the time it is given, while
-`travel`, `travel_to` and `freeze_time` set them to zero unless
-`with_usec: true` is passed. Add that keyword wherever a test depends
-on the fractional part of a second. It is available from Rails 7.1.
-
 ## Rails version
 
 The cop only runs on Rails 7.1 and newer, where every replacement it
@@ -605,10 +596,12 @@ suggests exists. The version is taken from `TargetRailsVersion`, then
 from the `railties` entry of the lock file, and Rails 7.1 is assumed
 when neither is available.
 
-## RSpec Caveats
+[#safety-rspecrailstimecop]
+=== Safety
 
-Note that if using RSpec, `TimeHelpers` are not included by default,
-and must be manually included by updating `rails_helper` accordingly:
+The autocorrection is unsafe because `TimeHelpers` are not included
+by default, and must be manually included by updating `rails_helper`
+accordingly:
 
 ```ruby
 RSpec.configure do |config|
@@ -616,25 +609,9 @@ RSpec.configure do |config|
 end
 ```
 
-Moreover, `TimeHelpers` undoes time travel in `after_teardown`, which
-rspec-rails only runs in example groups that include
-`RSpec::Rails::RailsExampleGroup`. Those groups are selected by their
-`type:` metadata, so this cop only inspects code that sits inside an
-example, or inside an example-level hook, of an example group carrying
-one of the `SpecTypes` types. Anywhere else, replacing `Timecop` with
-`TimeHelpers` would leak a frozen clock into the following examples.
-
-This also means `rails_helper` has to be required instead of
-`spec_helper`, or a similar adapter layer has to be in effect.
-
-`RSpec::Rails::RailsExampleGroup` can be included into a type of your
-own, in which case add that type to `SpecTypes`:
-
-```ruby
-RSpec.configure do |config|
-  config.include RSpec::Rails::RailsExampleGroup, type: :service
-end
-```
+Also, the autocorrection is unsafe because `TimeHelpers` round down
+time to a whole second. Use the `with_usec: true` wherever a test
+depends on the fractional part of a second.
 
 [#examples-rspecrailstimecop]
 === Examples
@@ -652,14 +629,14 @@ travel(duration)
 travel_to(time)
 
 # bad
-Timecop.freeze { assert true }
-Timecop.freeze(duration) { assert true }
-Timecop.freeze(time) { assert true }
+Timecop.freeze { expect(neo).to be_caught }
+Timecop.freeze(duration) { expect(miller_vacation).to last_years }
+Timecop.freeze(time) { expect(top).to spin_forever }
 
 # good
-freeze_time { assert true }
-travel(duration) { assert true }
-travel_to(time) { assert true }
+freeze_time { expect(hand).to stop_bullets }
+travel(duration) { expect(cooper).to grow_corn_again }
+travel_to(time) { expect(us).to need_to_go_deeper }
 
 # bad
 Timecop.travel(duration)
@@ -671,21 +648,51 @@ travel_to(time)
 
 # bad
 Timecop.return
-Timecop.return { assert true }
+Timecop.return { expect(melissa).to be_erased }
 
 # good
 travel_back
-travel_back { assert true }
+travel_back { expect(melissa).to be_alive }
 
 # bad
 Timecop.scale(factor)
-Timecop.scale(factor) { assert true }
+Timecop.scale(factor) { expect(marty).to see_diplodocus }
 
 # good
 travel(duration)
 travel_to(time)
-travel(duration) { assert true }
-travel_to(time) { assert true }
+travel(duration) { expect(mccomb).to have_vanished }
+travel_to(time) { expect(marty).to see_a_hoverboard }
+----
+
+[#_spectypes_-configuration-rspecrailstimecop]
+==== `SpecTypes` configuration
+
+[source,ruby]
+----
+# `TimeHelpers` would leak a frozen clock into subsequent examples,
+#  so the cop only inspects those example groups that include the
+# `RSpec::Rails::RailsExampleGroup`, which runs the `after_teardown`.
+
+# Configure the cop to inspect custom types:
+
+# .rubocop.yml
+# RSpecRails/Timecop:
+#   SpecTypes:
+#     - service
+
+# spec/rails_helper.rb
+RSpec.configure do |config|
+  config.include RSpec::Rails::RailsExampleGroup, type: :service
+end
+
+# bad
+RSpec.describe 'TerminationService', type: :service do
+  it 'travels to the past' do
+    Timecop.travel("1984-05-12")
+    expect(t800).to seek_sarah
+  end
+end
 ----
 
 [#configurable-attributes-rspecrailstimecop]

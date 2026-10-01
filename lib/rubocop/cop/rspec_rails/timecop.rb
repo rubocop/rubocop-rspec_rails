@@ -101,16 +101,16 @@ module RuboCop
       #   travel_to(time) { expect(marty).to see_a_hoverboard }
       #
       # @example `SpecTypes` configuration
-      #   `TimeHelpers` would leak a frozen clock into the subsequent examples,
-      #    so the cop only inspects those example groups that include the
-      #   `RSpec::Rails::RailsExampleGroup`, which runs the `after_teardown`.
+      #   # `TimeHelpers` would leak a frozen clock into subsequent examples,
+      #   #  so the cop only inspects those example groups that include the
+      #   # `RSpec::Rails::RailsExampleGroup`, which runs the `after_teardown`.
       #
-      #   Configure the cop to inspect custom types:
+      #   # Configure the cop to inspect custom types:
       #
       #   # .rubocop.yml
-      #   RSpecRails/Timecop:
-      #     SpecTypes:
-      #       - service
+      #   # RSpecRails/Timecop:
+      #   #   SpecTypes:
+      #   #     - service
       #
       #   # spec/rails_helper.rb
       #   RSpec.configure do |config|
