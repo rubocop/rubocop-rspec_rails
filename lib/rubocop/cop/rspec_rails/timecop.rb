@@ -43,8 +43,8 @@ module RuboCop
       #
       # The cop only runs on Rails 7.1 and newer, where every replacement it
       # suggests exists. The version is taken from `TargetRailsVersion`, then
-      # from the `railties` entry of the lock file, and a current Rails is
-      # assumed when neither is available.
+      # from the `railties` entry of the lock file, and Rails 7.1 is assumed
+      # when neither is available.
       #
       # ## RSpec Caveats
       #
@@ -213,7 +213,7 @@ module RuboCop
           node.source_range.with(end_pos: node.location.selector.end_pos)
         end
 
-        # `TargetRailsVersion` wins, then the lock file, then a current Rails
+        # `TargetRailsVersion` wins, then the lock file, with a fallback to 7.1
         def rails_version
           version = config.for_all_cops['TargetRailsVersion'] ||
             target_gem_version('railties') || MINIMUM_RAILS_VERSION

@@ -602,8 +602,8 @@ on the fractional part of a second. It is available from Rails 7.1.
 
 The cop only runs on Rails 7.1 and newer, where every replacement it
 suggests exists. The version is taken from `TargetRailsVersion`, then
-from the `railties` entry of the lock file, and a current Rails is
-assumed when neither is available.
+from the `railties` entry of the lock file, and Rails 7.1 is assumed
+when neither is available.
 
 ## RSpec Caveats
 
