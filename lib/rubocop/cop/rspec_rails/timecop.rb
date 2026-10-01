@@ -166,7 +166,7 @@ module RuboCop
         PATTERN
 
         def on_send(node)
-          return unless rails_version >= MINIMUM_RAILS_VERSION
+          return if rails_version < MINIMUM_RAILS_VERSION
 
           timecop_send(node) do |message, arguments|
             on_timecop_send(node, message, arguments)
