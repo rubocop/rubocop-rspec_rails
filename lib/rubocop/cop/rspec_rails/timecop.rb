@@ -140,15 +140,15 @@ module RuboCop
         RESTRICT_ON_SEND = %i[freeze return scale travel].to_set
         MINIMUM_RAILS_VERSION = Gem::Version.new('7.1')
 
-        # @!method timecop_const?(node)
-        def_node_matcher :timecop_const?, <<~PATTERN
+        # @!method timecop?(node)
+        def_node_matcher :timecop?, <<~PATTERN
           (const {nil? cbase} :Timecop)
         PATTERN
 
         # @!method timecop_send(node)
         def_node_matcher :timecop_send, <<~PATTERN
           (send
-            #timecop_const? ${:freeze :return :scale :travel}
+            #timecop? ${:freeze :return :scale :travel}
             $...
           )
         PATTERN
@@ -181,9 +181,9 @@ module RuboCop
 
           case message
           when :freeze then on_timecop_freeze(node, arguments)
-          when :return then on_timecop_return(node, arguments)
-          when :scale  then on_timecop_scale(node, arguments)
-          when :travel then on_timecop_travel(node, arguments)
+          when :return then on_timecop_return(node)
+          when :scale  then on_timecop_scale(node)
+          when :travel then on_timecop_travel(node)
           # :nocov:
           else nil # rubocop:disable Style/EmptyElse
             # :nocov:
@@ -191,7 +191,7 @@ module RuboCop
         end
 
         def on_timecop_freeze(node, arguments)
-          unless arguments.empty?
+          if arguments.any?
             return add_offense(node, message: FREEZE_WITH_ARGUMENTS_MESSAGE)
           end
 
@@ -200,17 +200,17 @@ module RuboCop
           end
         end
 
-        def on_timecop_return(node, _arguments)
+        def on_timecop_return(node)
           add_offense(node, message: RETURN_MESSAGE) do |corrector|
             corrector.replace(receiver_and_message_range(node), 'travel_back')
           end
         end
 
-        def on_timecop_scale(node, _arguments)
+        def on_timecop_scale(node)
           add_offense(node, message: SCALE_MESSAGE)
         end
 
-        def on_timecop_travel(node, _arguments)
+        def on_timecop_travel(node)
           add_offense(node, message: TRAVEL_MESSAGE)
         end
 
@@ -231,7 +231,7 @@ module RuboCop
         end
 
         def spec_types
-          @spec_types ||= Array(cop_config['SpecTypes']).to_set(&:to_sym)
+          @spec_types ||= cop_config['SpecTypes'].to_set(&:to_sym)
         end
 
         # FIXME: shamelessly borrowed from rubocop-rspec's expect_output.rb
