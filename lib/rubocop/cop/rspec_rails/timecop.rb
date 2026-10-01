@@ -155,7 +155,14 @@ module RuboCop
 
         # @!method rails_group?(node, types)
         def_node_matcher :rails_group?, <<~PATTERN
-          (block (send #rspec? #ExampleGroups.all ... (hash <(pair (sym :type) (sym %1)) ...>)) ...)
+          (block (send #rspec?
+              #ExampleGroups.all ... #rails_metadata?(%1)
+            ) ... )
+        PATTERN
+
+        # @!method rails_metadata?(node, types)
+        def_node_matcher :rails_metadata?, <<~PATTERN
+          (hash <(pair (sym :type) (sym %1)) ...>)
         PATTERN
 
         def on_send(node)
