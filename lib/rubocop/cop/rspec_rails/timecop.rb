@@ -6,6 +6,7 @@ module RuboCop
       # Enforces use of ActiveSupport TimeHelpers instead of Timecop.
       #
       # ## Migration
+      #
       # `Timecop.freeze` should be replaced with `freeze_time` when used
       # without arguments. Where a `duration` has been passed to `freeze`, it
       # should be replaced with `travel`. Likewise, where a `time` has been
@@ -29,16 +30,6 @@ module RuboCop
       # rather than relying on time continuing to flow, it should be travelled
       # to explicitly.
       #
-      # Only these four calls are flagged. A bare `Timecop` reference, or any
-      # other message sent to it, is left alone.
-      #
-      # ## Sub-second precision
-      #
-      # `Timecop` keeps the microseconds of the time it is given, while
-      # `travel`, `travel_to` and `freeze_time` set them to zero unless
-      # `with_usec: true` is passed. Add that keyword wherever a test depends
-      # on the fractional part of a second. It is available from Rails 7.1.
-      #
       # ## Rails version
       #
       # The cop only runs on Rails 7.1 and newer, where every replacement it
@@ -46,16 +37,21 @@ module RuboCop
       # from the `railties` entry of the lock file, and Rails 7.1 is assumed
       # when neither is available.
       #
-      # ## RSpec Caveats
+      # @safety
+      #   The autocorrection is unsafe because `TimeHelpers` are not included
+      #   by default, and must be manually included by updating `rails_helper`
+      #   accordingly:
       #
-      # Note that if using RSpec, `TimeHelpers` are not included by default,
-      # and must be manually included by updating `rails_helper` accordingly:
+      #   ```ruby
+      #   RSpec.configure do |config|
+      #     config.include ActiveSupport::Testing::TimeHelpers
+      #   end
+      #   ```
       #
-      # ```ruby
-      # RSpec.configure do |config|
-      #   config.include ActiveSupport::Testing::TimeHelpers
-      # end
-      # ```
+      # @safety
+      #   Also, the autocorrection is unsafe because `TimeHelpers` round down
+      #   time to a whole second. Use the `with_usec: true` wherever a test
+      #   depends on the fractional part of a second.
       #
       # @example
       #   # bad
