@@ -57,7 +57,56 @@ module RuboCop
       # end
       # ```
       #
-      # Moreover, `TimeHelpers` undoes time travel in `after_teardown`, which
+      # @example
+      #   # bad
+      #   Timecop.freeze
+      #   Timecop.freeze(duration)
+      #   Timecop.freeze(time)
+      #
+      #   # good
+      #   freeze_time
+      #   travel(duration)
+      #   travel_to(time)
+      #
+      #   # bad
+      #   Timecop.freeze { expect(neo).to be_caught }
+      #   Timecop.freeze(duration) { expect(miller_vacation).to last_years }
+      #   Timecop.freeze(time) { expect(top).to spin_forever }
+      #
+      #   # good
+      #   freeze_time { expect(hand).to stop_bullets }
+      #   travel(duration) { expect(cooper).to grow_corn_again }
+      #   travel_to(time) { expect(us).to need_to_go_deeper }
+      #
+      #   # bad
+      #   Timecop.travel(duration)
+      #   Timecop.travel(time)
+      #
+      #   # good
+      #   travel(duration)
+      #   travel_to(time)
+      #
+      #   # bad
+      #   Timecop.return
+      #   Timecop.return { expect(melissa).to be_erased }
+      #
+      #   # good
+      #   travel_back
+      #   travel_back { expect(melissa).to be_alive }
+      #
+      #   # bad
+      #   Timecop.scale(factor)
+      #   Timecop.scale(factor) { expect(marty).to see_diplodocus }
+      #
+      #   # good
+      #   travel(duration)
+      #   travel_to(time)
+      #   travel(duration) { expect(mccomb).to have_vanished }
+      #   travel_to(time) { expect(marty).to see_a_hoverboard }
+      #
+      # @example
+      #
+      #   in `after_teardown`, which
       # rspec-rails only runs in example groups that include
       # `RSpec::Rails::RailsExampleGroup`. Those groups are selected by their
       # `type:` metadata, so this cop only inspects code that sits inside an
@@ -77,52 +126,6 @@ module RuboCop
       # end
       # ```
       #
-      # @example
-      #   # bad
-      #   Timecop.freeze
-      #   Timecop.freeze(duration)
-      #   Timecop.freeze(time)
-      #
-      #   # good
-      #   freeze_time
-      #   travel(duration)
-      #   travel_to(time)
-      #
-      #   # bad
-      #   Timecop.freeze { assert true }
-      #   Timecop.freeze(duration) { assert true }
-      #   Timecop.freeze(time) { assert true }
-      #
-      #   # good
-      #   freeze_time { assert true }
-      #   travel(duration) { assert true }
-      #   travel_to(time) { assert true }
-      #
-      #   # bad
-      #   Timecop.travel(duration)
-      #   Timecop.travel(time)
-      #
-      #   # good
-      #   travel(duration)
-      #   travel_to(time)
-      #
-      #   # bad
-      #   Timecop.return
-      #   Timecop.return { assert true }
-      #
-      #   # good
-      #   travel_back
-      #   travel_back { assert true }
-      #
-      #   # bad
-      #   Timecop.scale(factor)
-      #   Timecop.scale(factor) { assert true }
-      #
-      #   # good
-      #   travel(duration)
-      #   travel_to(time)
-      #   travel(duration) { assert true }
-      #   travel_to(time) { assert true }
       class Timecop < RuboCop::Cop::RSpec::Base
         extend AutoCorrector
 
