@@ -130,14 +130,12 @@ module RuboCop
         FREEZE_WITH_ARGUMENTS_MESSAGE =
           'Use `travel` or `travel_to` instead of `Timecop.freeze`'
         RETURN_MESSAGE = 'Use `travel_back` instead of `Timecop.return`'
-        FLOW_ADDENDUM =
+        ADDENDUM =
           'If you need time to keep flowing, simulate it by travelling again.'
         TRAVEL_MESSAGE =
-          'Use `travel` or `travel_to` instead of `Timecop.travel`. ' \
-          "#{FLOW_ADDENDUM}"
+          "Use `travel` or `travel_to` instead of `Timecop.travel`. #{ADDENDUM}"
         SCALE_MESSAGE =
-          'Use `travel` or `travel_to` instead of `Timecop.scale`. ' \
-          "#{FLOW_ADDENDUM}"
+          "Use `travel` or `travel_to` instead of `Timecop.scale`. #{ADDENDUM}"
 
         RESTRICT_ON_SEND = %i[freeze return scale travel].to_set
         MINIMUM_RAILS_VERSION = Gem::Version.new('7.1')
