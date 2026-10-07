@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+## 2.33.0 (2026-10-07)
+
 - Add `RSpecRails/FileFixture` cop to prefer `file_fixture` over hardcoded fixture paths. ([@ydah])
 - Fix `RSpecRails/HttpStatus` to detect unknown symbolic HTTP statuses and handle custom numeric string statuses consistently. ([@ydah])
 - Speed up loading rubocop-rspec_rails by lazily loading only the cops needed for a run. This requires RuboCop 1.89.0+. ([@koic])
