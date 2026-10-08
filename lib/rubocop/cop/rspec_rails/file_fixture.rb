@@ -16,6 +16,7 @@ module RuboCop
       #   Rails.root.join('spec/fixtures/files', 'example.pdf')
       #   Rails.root.join("spec/fixtures/files/#{name}.pdf")
       #   Rails.root.join('spec/fixtures/files/' + name)
+      #   Rails.root.join('spec', 'fixtures') / 'files' / 'example.pdf'
       #
       #   # good
       #   file_fixture('example.pdf')
@@ -35,20 +36,42 @@ module RuboCop
             :join $...)
         PATTERN
 
+        # @!method path_extension(node)
+        def_node_matcher :path_extension, <<~PATTERN
+          (send _ {:join :/} $...)
+        PATTERN
+
         # @!method file_fixture_path_assignment?(node)
         def_node_matcher :file_fixture_path_assignment?, <<~PATTERN
           (send _ :file_fixture_path= ...)
         PATTERN
 
         def on_send(node)
-          return if file_fixture_path_assignment?(node.parent)
-
           rails_root_join(node) do |arguments|
-            add_offense(node.loc.selector) if fixture_path?(arguments)
+            outer, segments = extend_path(node, arguments)
+            next if file_fixture_path_assignment?(outer.parent)
+
+            add_offense(node.loc.selector) if fixture_path?(segments)
           end
         end
 
         private
+
+        # Follows `join` and `/` calls chained onto the node, collecting their
+        # arguments as further path segments.
+        def extend_path(node, segments)
+          while (extension = chained_segments(node.parent, node))
+            segments += extension
+            node = node.parent
+          end
+          [node, segments]
+        end
+
+        def chained_segments(parent, node)
+          return unless parent&.send_type? && parent.receiver.equal?(node)
+
+          path_extension(parent)
+        end
 
         # The literal prefix of the joined path points inside `spec/fixtures`,
         # or at `spec/fixtures` itself with dynamic segments after it.
