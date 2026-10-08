@@ -77,6 +77,9 @@ Rails.root.join("spec/fixtures/files/#{name}.pdf")
 # good
 file_fixture('example.pdf')
 file_fixture("#{name}.pdf")
+
+# good - configuring `file_fixture_path` itself
+config.file_fixture_path = Rails.root.join('spec/fixtures/files')
 ----
 
 [#references-rspecrailsfilefixture]
