@@ -15,9 +15,38 @@ RSpec.describe RuboCop::Cop::RSpecRails::FileFixture do
     RUBY
   end
 
+  it 'registers an offense when the whole path is one argument' do
+    expect_offense(<<~RUBY)
+      Rails.root.join('spec/fixtures/something.pdf')
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+    RUBY
+  end
+
+  it 'registers an offense for a subdirectory of spec/fixtures' do
+    expect_offense(<<~RUBY)
+      Rails.root.join('spec/fixtures/files', 'something.pdf')
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec', 'fixtures/files', 'something.pdf')
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec/fixtures/files/something.pdf')
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+    RUBY
+  end
+
+  it 'registers an offense for a variable file name under spec/fixtures' do
+    expect_offense(<<~RUBY)
+      Rails.root.join('spec', 'fixtures', name)
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec/fixtures', name)
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+    RUBY
+  end
+
   it 'registers an offense for an interpolated path under spec/fixtures' do
     expect_offense(<<~'RUBY')
       Rails.root.join("spec/fixtures/#{name}")
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec', "fixtures/#{name}")
                  ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
       Rails.root.join("spec/fixtures/files/#{name}.pdf")
                  ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
@@ -38,6 +67,8 @@ RSpec.describe RuboCop::Cop::RSpecRails::FileFixture do
   it 'does not register an offense for a fixture directory without a file' do
     expect_no_offenses(<<~RUBY)
       Rails.root.join('spec', 'fixtures')
+      Rails.root.join('spec/fixtures')
+      Rails.root.join('spec/fixtures/')
     RUBY
   end
 
@@ -45,6 +76,7 @@ RSpec.describe RuboCop::Cop::RSpecRails::FileFixture do
     expect_no_offenses(<<~RUBY)
       Rails.root.join('spec', 'support', 'something.pdf')
       Rails.root.join('spec/fixtures_backup', 'something.pdf')
+      Rails.root.join('spec', dir, 'something.pdf')
     RUBY
   end
 

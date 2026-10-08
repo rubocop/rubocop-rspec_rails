@@ -13,6 +13,7 @@ module RuboCop
       # @example
       #   # bad
       #   Rails.root.join('spec', 'fixtures', 'files', 'example.pdf')
+      #   Rails.root.join('spec/fixtures/files', 'example.pdf')
       #   Rails.root.join("spec/fixtures/files/#{name}.pdf")
       #
       #   # good
@@ -21,44 +22,47 @@ module RuboCop
       class FileFixture < RuboCop::Cop::Base
         MSG = 'Prefer `file_fixture` for files under `spec/fixtures`.'
         RESTRICT_ON_SEND = %i[join].freeze
+        FIXTURES_DIR = 'spec/fixtures'
 
-        # @!method fixture_path?(node)
-        def_node_matcher :fixture_path?, <<~PATTERN
+        # @!method rails_root_join(node)
+        def_node_matcher :rails_root_join, <<~PATTERN
           (send
             (send (const {nil? cbase} :Rails) :root)
-            :join (str "spec") (str "fixtures") _ ...)
-        PATTERN
-
-        # @!method combined_fixture_path?(node)
-        def_node_matcher :combined_fixture_path?, <<~PATTERN
-          (send
-            (send (const {nil? cbase} :Rails) :root)
-            :join (str "spec/fixtures") _ ...)
-        PATTERN
-
-        # @!method interpolated_fixture_path?(node)
-        def_node_matcher :interpolated_fixture_path?, <<~PATTERN
-          (send
-            (send (const {nil? cbase} :Rails) :root)
-            :join (dstr (str #fixture_prefix?) ...) ...)
+            :join $...)
         PATTERN
 
         def on_send(node)
-          return unless hardcoded_fixture_path?(node)
-
-          add_offense(node.loc.selector)
+          rails_root_join(node) do |arguments|
+            add_offense(node.loc.selector) if fixture_path?(arguments)
+          end
         end
 
         private
 
-        def hardcoded_fixture_path?(node)
-          fixture_path?(node) ||
-            combined_fixture_path?(node) ||
-            interpolated_fixture_path?(node)
+        # The literal prefix of the joined path points inside `spec/fixtures`,
+        # or at `spec/fixtures` itself with dynamic segments after it.
+        def fixture_path?(arguments)
+          prefix, dynamic = literal_prefix(arguments)
+          prefix = prefix.sub(%r{/+\z}, '')
+
+          prefix.start_with?("#{FIXTURES_DIR}/") ||
+            (prefix == FIXTURES_DIR && dynamic)
         end
 
-        def fixture_prefix?(string)
-          string.start_with?('spec/fixtures/')
+        # Joins the leading string literals of the arguments and reports
+        # whether a non-literal segment follows them.
+        def literal_prefix(arguments)
+          segments = []
+          arguments.each do |argument|
+            unless argument.str_type?
+              head = argument.children.first if argument.dstr_type?
+              segments << head.value if head&.str_type?
+              return [segments.join('/'), true]
+            end
+
+            segments << argument.value
+          end
+          [segments.join('/'), false]
         end
       end
     end
