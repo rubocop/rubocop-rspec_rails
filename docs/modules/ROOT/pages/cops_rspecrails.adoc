@@ -71,6 +71,7 @@ moved or `file_fixture_path` configured before replacing the path.
 ----
 # bad
 Rails.root.join('spec', 'fixtures', 'files', 'example.pdf')
+Rails.root.join('spec/fixtures/files', 'example.pdf')
 Rails.root.join("spec/fixtures/files/#{name}.pdf")
 
 # good
