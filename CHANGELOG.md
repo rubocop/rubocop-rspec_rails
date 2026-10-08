@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+- Fix `RSpecRails/FileFixture` to detect interpolated paths under `spec/fixtures`. ([@pjg])
+
 ## 2.33.0 (2026-10-07)
 
 - Add `RSpecRails/FileFixture` cop to prefer `file_fixture` over hardcoded fixture paths. ([@ydah])
@@ -111,6 +113,7 @@
 [@nzlaura]: https://github.com/nzlaura
 [@paydaylight]: https://github.com/paydaylight
 [@pirj]: https://github.com/pirj
+[@pjg]: https://github.com/pjg
 [@r7kamura]: https://github.com/r7kamura
 [@splattael]: https://github.com/splattael
 [@taketo1113]: https://github.com/taketo1113
