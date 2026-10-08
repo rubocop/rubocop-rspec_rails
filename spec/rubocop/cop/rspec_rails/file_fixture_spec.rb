@@ -87,6 +87,45 @@ RSpec.describe RuboCop::Cop::RSpecRails::FileFixture do
     RUBY
   end
 
+  it 'registers an offense for a path built from Rails.root with `/` or `+`' do
+    expect_offense(<<~RUBY)
+      Rails.root / 'spec' / 'fixtures' / name
+                 ^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root + 'spec/fixtures/something.pdf'
+                 ^ Prefer `file_fixture` for files under `spec/fixtures`.
+    RUBY
+  end
+
+  it 'registers an offense for a path built with `File.join` from Rails.root' do
+    expect_offense(<<~RUBY)
+      File.join(Rails.root, 'spec', 'fixtures', 'something.pdf')
+           ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      File.join(Rails.root, 'spec/fixtures', name)
+           ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+    RUBY
+  end
+
+  it 'registers an offense for a string that interpolates Rails.root' do
+    expect_offense(<<~'RUBY')
+      "#{Rails.root}/spec/fixtures/something.pdf"
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      File.read("#{Rails.root}/spec/fixtures/#{name}")
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+    RUBY
+  end
+
+  it 'does not register an offense for other paths built from Rails.root' do
+    expect_no_offenses(<<~'RUBY')
+      Rails.root / 'spec' / 'fixtures'
+      Rails.root / 'spec' / 'support' / name
+      File.join(Rails.root, 'spec', 'support', 'something.pdf')
+      File.join(dir, 'spec', 'fixtures', 'something.pdf')
+      "#{Rails.root}/spec/fixtures"
+      "#{Rails.root}/spec/support/#{name}"
+      "#{dir}/spec/fixtures/something.pdf"
+    RUBY
+  end
+
   it 'registers an offense for an interpolated path under spec/fixtures' do
     expect_offense(<<~'RUBY')
       Rails.root.join("spec/fixtures/#{name}")
@@ -130,6 +169,7 @@ RSpec.describe RuboCop::Cop::RSpecRails::FileFixture do
       config.file_fixture_path = Rails.root.join('spec/fixtures/files')
       self.file_fixture_path = Rails.root.join('spec', 'fixtures', 'files')
       config.file_fixture_path = Rails.root.join('spec', 'fixtures') / 'files'
+      config.file_fixture_path = "\#{Rails.root}/spec/fixtures/files"
     RUBY
   end
 

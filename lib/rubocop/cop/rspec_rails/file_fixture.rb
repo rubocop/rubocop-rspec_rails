@@ -17,6 +17,9 @@ module RuboCop
       #   Rails.root.join("spec/fixtures/files/#{name}.pdf")
       #   Rails.root.join('spec/fixtures/files/' + name)
       #   Rails.root.join('spec', 'fixtures') / 'files' / 'example.pdf'
+      #   Rails.root / 'spec' / 'fixtures' / 'files' / 'example.pdf'
+      #   File.join(Rails.root, 'spec', 'fixtures', 'files', 'example.pdf')
+      #   "#{Rails.root}/spec/fixtures/files/example.pdf"
       #
       #   # good
       #   file_fixture('example.pdf')
@@ -26,19 +29,29 @@ module RuboCop
       #   config.file_fixture_path = Rails.root.join('spec/fixtures/files')
       class FileFixture < RuboCop::Cop::Base
         MSG = 'Prefer `file_fixture` for files under `spec/fixtures`.'
-        RESTRICT_ON_SEND = %i[join].freeze
+        RESTRICT_ON_SEND = %i[join / +].freeze
         FIXTURES_DIR = 'spec/fixtures'
 
-        # @!method rails_root_join(node)
-        def_node_matcher :rails_root_join, <<~PATTERN
-          (send
-            (send (const {nil? cbase} :Rails) :root)
-            :join $...)
+        # @!method rails_root_path(node)
+        def_node_matcher :rails_root_path, <<~PATTERN
+          {
+            (send
+              (send (const {nil? cbase} :Rails) :root)
+              {:join :/ :+} $...)
+            (send
+              (const {nil? cbase} :File) :join
+              (send (const {nil? cbase} :Rails) :root) $...)
+          }
+        PATTERN
+
+        # @!method rails_root_string(node)
+        def_node_matcher :rails_root_string, <<~PATTERN
+          (dstr (begin (send (const {nil? cbase} :Rails) :root)) $...)
         PATTERN
 
         # @!method path_extension(node)
         def_node_matcher :path_extension, <<~PATTERN
-          (send _ {:join :/} $...)
+          (send _ {:join :/ :+} $...)
         PATTERN
 
         # @!method file_fixture_path_assignment?(node)
@@ -47,11 +60,21 @@ module RuboCop
         PATTERN
 
         def on_send(node)
-          rails_root_join(node) do |arguments|
+          rails_root_path(node) do |arguments|
             outer, segments = extend_path(node, arguments)
             next if file_fixture_path_assignment?(outer.parent)
 
-            add_offense(node.loc.selector) if fixture_path?(segments)
+            prefix, dynamic = literal_prefix(segments)
+            add_offense(node.loc.selector) if fixture_path?(prefix, dynamic)
+          end
+        end
+
+        def on_dstr(node)
+          rails_root_string(node) do |rest|
+            next if file_fixture_path_assignment?(node.parent)
+
+            text, dynamic = literal_run(rest)
+            add_offense(node) if fixture_path?(text.sub(%r{\A/+}, ''), dynamic)
           end
         end
 
@@ -73,10 +96,9 @@ module RuboCop
           path_extension(parent)
         end
 
-        # The literal prefix of the joined path points inside `spec/fixtures`,
-        # or at `spec/fixtures` itself with dynamic segments after it.
-        def fixture_path?(arguments)
-          prefix, dynamic = literal_prefix(arguments)
+        # The literal prefix of the path points inside `spec/fixtures`, or at
+        # `spec/fixtures` itself with dynamic segments after it.
+        def fixture_path?(prefix, dynamic)
           prefix = prefix.sub(%r{/+\z}, '')
 
           prefix.start_with?("#{FIXTURES_DIR}/") ||
