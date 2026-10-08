@@ -2,7 +2,7 @@
 
 ## Master (Unreleased)
 
-- Fix `RSpecRails/FileFixture` to detect single-argument, subdirectory and interpolated paths under `spec/fixtures`. ([@pjg])
+- Fix `RSpecRails/FileFixture` to detect single-argument, subdirectory, interpolated and concatenated paths under `spec/fixtures`. ([@pjg])
 - Fix a false positive for `RSpecRails/FileFixture` when configuring `file_fixture_path`. ([@pjg])
 
 ## 2.33.0 (2026-10-07)

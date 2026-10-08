@@ -15,6 +15,7 @@ module RuboCop
       #   Rails.root.join('spec', 'fixtures', 'files', 'example.pdf')
       #   Rails.root.join('spec/fixtures/files', 'example.pdf')
       #   Rails.root.join("spec/fixtures/files/#{name}.pdf")
+      #   Rails.root.join('spec/fixtures/files/' + name)
       #
       #   # good
       #   file_fixture('example.pdf')
@@ -59,20 +60,43 @@ module RuboCop
             (prefix == FIXTURES_DIR && dynamic)
         end
 
-        # Joins the leading string literals of the arguments and reports
-        # whether a non-literal segment follows them.
+        # Joins the leading literal text of the arguments and reports
+        # whether a non-literal part follows it.
         def literal_prefix(arguments)
           segments = []
           arguments.each do |argument|
-            unless argument.str_type?
-              head = argument.children.first if argument.dstr_type?
-              segments << head.value if head&.str_type?
-              return [segments.join('/'), true]
-            end
-
-            segments << argument.value
+            text, dynamic = literal_text(argument)
+            segments << text
+            return [segments.join('/'), true] if dynamic
           end
           [segments.join('/'), false]
+        end
+
+        # The leading literal text of one argument and whether a
+        # non-literal part follows it.
+        def literal_text(node)
+          case node.type
+          when :str then [node.value, false]
+          when :dstr then literal_run(node.children)
+          when :send then concatenation_text(node)
+          else ['', true]
+          end
+        end
+
+        # `'spec/fixtures/' + name`, including longer `+` chains.
+        def concatenation_text(node)
+          return ['', true] unless node.method?(:+)
+
+          left, dynamic = literal_text(node.receiver)
+          return [left, true] if dynamic
+
+          right, dynamic = literal_text(node.first_argument)
+          [left + right, dynamic]
+        end
+
+        def literal_run(nodes)
+          literal = nodes.take_while(&:str_type?)
+          [literal.map(&:value).join, literal.size < nodes.size]
         end
       end
     end
