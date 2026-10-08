@@ -15,9 +15,144 @@ RSpec.describe RuboCop::Cop::RSpecRails::FileFixture do
     RUBY
   end
 
+  it 'registers an offense when the whole path is one argument' do
+    expect_offense(<<~RUBY)
+      Rails.root.join('spec/fixtures/something.pdf')
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+    RUBY
+  end
+
+  it 'registers an offense for a subdirectory of spec/fixtures' do
+    expect_offense(<<~RUBY)
+      Rails.root.join('spec/fixtures/files', 'something.pdf')
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec', 'fixtures/files', 'something.pdf')
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec/fixtures/files/something.pdf')
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+    RUBY
+  end
+
+  it 'registers an offense for a variable file name under spec/fixtures' do
+    expect_offense(<<~RUBY)
+      Rails.root.join('spec', 'fixtures', name)
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec/fixtures', name)
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec', 'fixtures', fixture_name(id))
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec/fixtures', FILE_NAME)
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+    RUBY
+  end
+
+  it 'registers an offense for a concatenated path under spec/fixtures' do
+    expect_offense(<<~RUBY)
+      Rails.root.join('spec/fixtures/' + name)
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec/fixtures/' + 'something.pdf')
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec/' + 'fixtures/' + name + '.pdf')
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec', 'fixtures/' + name)
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+    RUBY
+  end
+
+  it 'does not register an offense for a concatenated path ' \
+     'outside spec/fixtures' do
+    expect_no_offenses(<<~RUBY)
+      Rails.root.join('spec/support/' + name)
+      Rails.root.join(dir + '/spec/fixtures/something.pdf')
+    RUBY
+  end
+
+  it 'registers an offense for a path chained onto the fixture directory' do
+    expect_offense(<<~RUBY)
+      Rails.root.join('spec', 'fixtures') / name
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec', 'fixtures').join(name)
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec/fixtures').join('files', 'something.pdf')
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec') / 'fixtures' / 'something.pdf'
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+    RUBY
+  end
+
+  it 'does not register an offense for a chained path outside spec/fixtures' do
+    expect_no_offenses(<<~RUBY)
+      Rails.root.join('spec').join('fixtures')
+      Rails.root.join('spec') / 'support' / 'something.pdf'
+    RUBY
+  end
+
+  it 'registers an offense for a path built from Rails.root with `/` or `+`' do
+    expect_offense(<<~RUBY)
+      Rails.root / 'spec' / 'fixtures' / name
+                 ^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root + 'spec/fixtures/something.pdf'
+                 ^ Prefer `file_fixture` for files under `spec/fixtures`.
+    RUBY
+  end
+
+  it 'registers an offense for a path built with `File.join` from Rails.root' do
+    expect_offense(<<~RUBY)
+      File.join(Rails.root, 'spec', 'fixtures', 'something.pdf')
+           ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      File.join(Rails.root, 'spec/fixtures', name)
+           ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+    RUBY
+  end
+
+  it 'registers an offense for a string that interpolates Rails.root' do
+    expect_offense(<<~'RUBY')
+      "#{Rails.root}/spec/fixtures/something.pdf"
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      File.read("#{Rails.root}/spec/fixtures/#{name}")
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+    RUBY
+  end
+
+  it 'does not register an offense for other paths built from Rails.root' do
+    expect_no_offenses(<<~'RUBY')
+      Rails.root / 'spec' / 'fixtures'
+      Rails.root / 'spec' / 'support' / name
+      File.join(Rails.root, 'spec', 'support', 'something.pdf')
+      File.join(dir, 'spec', 'fixtures', 'something.pdf')
+      "#{Rails.root}/spec/fixtures"
+      "#{Rails.root}/spec/support/#{name}"
+      "#{dir}/spec/fixtures/something.pdf"
+    RUBY
+  end
+
+  it 'registers an offense for an interpolated path under spec/fixtures' do
+    expect_offense(<<~'RUBY')
+      Rails.root.join("spec/fixtures/#{name}")
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec', "fixtures/#{name}")
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join("spec/fixtures/files/#{name}.pdf")
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join("spec/fixtures/#{dir}/#{name}", 'other.pdf')
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+    RUBY
+  end
+
+  it 'does not register an offense for an interpolated path ' \
+     'outside spec/fixtures' do
+    expect_no_offenses(<<~'RUBY')
+      Rails.root.join("spec/support/#{name}")
+      Rails.root.join("spec/fixtures_backup/#{name}")
+      Rails.root.join("#{dir}/spec/fixtures/something.pdf")
+    RUBY
+  end
+
   it 'does not register an offense for a fixture directory without a file' do
     expect_no_offenses(<<~RUBY)
       Rails.root.join('spec', 'fixtures')
+      Rails.root.join('spec/fixtures')
+      Rails.root.join('spec/fixtures/')
     RUBY
   end
 
@@ -25,6 +160,16 @@ RSpec.describe RuboCop::Cop::RSpecRails::FileFixture do
     expect_no_offenses(<<~RUBY)
       Rails.root.join('spec', 'support', 'something.pdf')
       Rails.root.join('spec/fixtures_backup', 'something.pdf')
+      Rails.root.join('spec', dir, 'something.pdf')
+    RUBY
+  end
+
+  it 'does not register an offense when configuring `file_fixture_path`' do
+    expect_no_offenses(<<~RUBY)
+      config.file_fixture_path = Rails.root.join('spec/fixtures/files')
+      self.file_fixture_path = Rails.root.join('spec', 'fixtures', 'files')
+      config.file_fixture_path = Rails.root.join('spec', 'fixtures') / 'files'
+      config.file_fixture_path = "\#{Rails.root}/spec/fixtures/files"
     RUBY
   end
 

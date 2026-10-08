@@ -13,31 +13,135 @@ module RuboCop
       # @example
       #   # bad
       #   Rails.root.join('spec', 'fixtures', 'files', 'example.pdf')
+      #   Rails.root.join('spec/fixtures/files', 'example.pdf')
+      #   Rails.root.join("spec/fixtures/files/#{name}.pdf")
+      #   Rails.root.join('spec/fixtures/files/' + name)
+      #   Rails.root.join('spec', 'fixtures') / 'files' / 'example.pdf'
+      #   Rails.root / 'spec' / 'fixtures' / 'files' / 'example.pdf'
+      #   File.join(Rails.root, 'spec', 'fixtures', 'files', 'example.pdf')
+      #   "#{Rails.root}/spec/fixtures/files/example.pdf"
       #
       #   # good
       #   file_fixture('example.pdf')
+      #   file_fixture("#{name}.pdf")
+      #
+      #   # good - configuring `file_fixture_path` itself
+      #   config.file_fixture_path = Rails.root.join('spec/fixtures/files')
       class FileFixture < RuboCop::Cop::Base
         MSG = 'Prefer `file_fixture` for files under `spec/fixtures`.'
-        RESTRICT_ON_SEND = %i[join].freeze
+        RESTRICT_ON_SEND = %i[join / +].freeze
+        FIXTURES_DIR = 'spec/fixtures'
 
-        # @!method fixture_path?(node)
-        def_node_matcher :fixture_path?, <<~PATTERN
-          (send
-            (send (const {nil? cbase} :Rails) :root)
-            :join (str "spec") (str "fixtures") _ ...)
+        # @!method rails_root_path(node)
+        def_node_matcher :rails_root_path, <<~PATTERN
+          {
+            (send
+              (send (const {nil? cbase} :Rails) :root)
+              {:join :/ :+} $...)
+            (send
+              (const {nil? cbase} :File) :join
+              (send (const {nil? cbase} :Rails) :root) $...)
+          }
         PATTERN
 
-        # @!method combined_fixture_path?(node)
-        def_node_matcher :combined_fixture_path?, <<~PATTERN
-          (send
-            (send (const {nil? cbase} :Rails) :root)
-            :join (str "spec/fixtures") _ ...)
+        # @!method rails_root_string(node)
+        def_node_matcher :rails_root_string, <<~PATTERN
+          (dstr (begin (send (const {nil? cbase} :Rails) :root)) $...)
+        PATTERN
+
+        # @!method path_extension(node)
+        def_node_matcher :path_extension, <<~PATTERN
+          (send _ {:join :/ :+} $...)
+        PATTERN
+
+        # @!method file_fixture_path_assignment?(node)
+        def_node_matcher :file_fixture_path_assignment?, <<~PATTERN
+          (send _ :file_fixture_path= ...)
         PATTERN
 
         def on_send(node)
-          return unless fixture_path?(node) || combined_fixture_path?(node)
+          rails_root_path(node) do |arguments|
+            outer, segments = extend_path(node, arguments)
+            next if file_fixture_path_assignment?(outer.parent)
 
-          add_offense(node.loc.selector)
+            prefix, dynamic = literal_prefix(segments)
+            add_offense(node.loc.selector) if fixture_path?(prefix, dynamic)
+          end
+        end
+
+        def on_dstr(node)
+          rails_root_string(node) do |rest|
+            next if file_fixture_path_assignment?(node.parent)
+
+            text, dynamic = literal_run(rest)
+            add_offense(node) if fixture_path?(text.sub(%r{\A/+}, ''), dynamic)
+          end
+        end
+
+        private
+
+        # Follows `join` and `/` calls chained onto the node, collecting their
+        # arguments as further path segments.
+        def extend_path(node, segments)
+          while (extension = chained_segments(node.parent, node))
+            segments += extension
+            node = node.parent
+          end
+          [node, segments]
+        end
+
+        def chained_segments(parent, node)
+          return unless parent&.send_type? && parent.receiver.equal?(node)
+
+          path_extension(parent)
+        end
+
+        # The literal prefix of the path points inside `spec/fixtures`, or at
+        # `spec/fixtures` itself with dynamic segments after it.
+        def fixture_path?(prefix, dynamic)
+          prefix = prefix.sub(%r{/+\z}, '')
+
+          prefix.start_with?("#{FIXTURES_DIR}/") ||
+            (prefix == FIXTURES_DIR && dynamic)
+        end
+
+        # Joins the leading literal text of the arguments and reports
+        # whether a non-literal part follows it.
+        def literal_prefix(arguments)
+          segments = []
+          arguments.each do |argument|
+            text, dynamic = literal_text(argument)
+            segments << text
+            return [segments.join('/'), true] if dynamic
+          end
+          [segments.join('/'), false]
+        end
+
+        # The leading literal text of one argument and whether a
+        # non-literal part follows it.
+        def literal_text(node)
+          case node.type
+          when :str then [node.value, false]
+          when :dstr then literal_run(node.children)
+          when :send then concatenation_text(node)
+          else ['', true]
+          end
+        end
+
+        # `'spec/fixtures/' + name`, including longer `+` chains.
+        def concatenation_text(node)
+          return ['', true] unless node.method?(:+)
+
+          left, dynamic = literal_text(node.receiver)
+          return [left, true] if dynamic
+
+          right, dynamic = literal_text(node.first_argument)
+          [left + right, dynamic]
+        end
+
+        def literal_run(nodes)
+          literal = nodes.take_while(&:str_type?)
+          [literal.map(&:value).join, literal.size < nodes.size]
         end
       end
     end
