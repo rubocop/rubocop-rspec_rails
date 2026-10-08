@@ -39,6 +39,31 @@ RSpec.describe RuboCop::Cop::RSpecRails::FileFixture do
                  ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
       Rails.root.join('spec/fixtures', name)
                  ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec', 'fixtures', fixture_name(id))
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec/fixtures', FILE_NAME)
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+    RUBY
+  end
+
+  it 'registers an offense for a concatenated path under spec/fixtures' do
+    expect_offense(<<~RUBY)
+      Rails.root.join('spec/fixtures/' + name)
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec/fixtures/' + 'something.pdf')
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec/' + 'fixtures/' + name + '.pdf')
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+      Rails.root.join('spec', 'fixtures/' + name)
+                 ^^^^ Prefer `file_fixture` for files under `spec/fixtures`.
+    RUBY
+  end
+
+  it 'does not register an offense for a concatenated path ' \
+     'outside spec/fixtures' do
+    expect_no_offenses(<<~RUBY)
+      Rails.root.join('spec/support/' + name)
+      Rails.root.join(dir + '/spec/fixtures/something.pdf')
     RUBY
   end
 
