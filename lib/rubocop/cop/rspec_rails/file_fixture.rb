@@ -19,6 +19,9 @@ module RuboCop
       #   # good
       #   file_fixture('example.pdf')
       #   file_fixture("#{name}.pdf")
+      #
+      #   # good - configuring `file_fixture_path` itself
+      #   config.file_fixture_path = Rails.root.join('spec/fixtures/files')
       class FileFixture < RuboCop::Cop::Base
         MSG = 'Prefer `file_fixture` for files under `spec/fixtures`.'
         RESTRICT_ON_SEND = %i[join].freeze
@@ -31,7 +34,14 @@ module RuboCop
             :join $...)
         PATTERN
 
+        # @!method file_fixture_path_assignment?(node)
+        def_node_matcher :file_fixture_path_assignment?, <<~PATTERN
+          (send _ :file_fixture_path= ...)
+        PATTERN
+
         def on_send(node)
+          return if file_fixture_path_assignment?(node.parent)
+
           rails_root_join(node) do |arguments|
             add_offense(node.loc.selector) if fixture_path?(arguments)
           end

@@ -80,6 +80,13 @@ RSpec.describe RuboCop::Cop::RSpecRails::FileFixture do
     RUBY
   end
 
+  it 'does not register an offense when configuring `file_fixture_path`' do
+    expect_no_offenses(<<~RUBY)
+      config.file_fixture_path = Rails.root.join('spec/fixtures/files')
+      self.file_fixture_path = Rails.root.join('spec', 'fixtures', 'files')
+    RUBY
+  end
+
   it 'does not register an offense for a different root or file_fixture' do
     expect_no_offenses(<<~RUBY)
       Other.root.join('spec', 'fixtures', 'something.pdf')
