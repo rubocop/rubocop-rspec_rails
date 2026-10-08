@@ -13,9 +13,11 @@ module RuboCop
       # @example
       #   # bad
       #   Rails.root.join('spec', 'fixtures', 'files', 'example.pdf')
+      #   Rails.root.join("spec/fixtures/files/#{name}.pdf")
       #
       #   # good
       #   file_fixture('example.pdf')
+      #   file_fixture("#{name}.pdf")
       class FileFixture < RuboCop::Cop::Base
         MSG = 'Prefer `file_fixture` for files under `spec/fixtures`.'
         RESTRICT_ON_SEND = %i[join].freeze
@@ -34,10 +36,29 @@ module RuboCop
             :join (str "spec/fixtures") _ ...)
         PATTERN
 
+        # @!method interpolated_fixture_path?(node)
+        def_node_matcher :interpolated_fixture_path?, <<~PATTERN
+          (send
+            (send (const {nil? cbase} :Rails) :root)
+            :join (dstr (str #fixture_prefix?) ...) ...)
+        PATTERN
+
         def on_send(node)
-          return unless fixture_path?(node) || combined_fixture_path?(node)
+          return unless hardcoded_fixture_path?(node)
 
           add_offense(node.loc.selector)
+        end
+
+        private
+
+        def hardcoded_fixture_path?(node)
+          fixture_path?(node) ||
+            combined_fixture_path?(node) ||
+            interpolated_fixture_path?(node)
+        end
+
+        def fixture_prefix?(string)
+          string.start_with?('spec/fixtures/')
         end
       end
     end
