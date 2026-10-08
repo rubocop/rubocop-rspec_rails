@@ -549,6 +549,168 @@ expect { do_something }
 
 * https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/ReceivePerformLater
 
+[#rspecrailstimecop]
+== RSpecRails/Timecop
+
+|===
+| Enabled by default | Safe | Supports autocorrection | Version Added | Version Changed
+
+| Pending
+| Yes
+| Always (Unsafe)
+| <<next>>
+| -
+|===
+
+Enforces use of ActiveSupport TimeHelpers instead of Timecop.
+
+## Migration
+
+`Timecop.freeze` should be replaced with `freeze_time` when used
+without arguments. Where a `duration` has been passed to `freeze`, it
+should be replaced with `travel`. Likewise, where a `time` has been
+passed to `freeze`, it should be replaced with `travel_to`.
+
+`travel` accepts an `ActiveSupport::Duration`, and is a shorthand for
+`travel_to(Time.now + duration)`, so it already leaves the clock
+frozen, exactly as `Timecop.freeze(duration)` does. Neither call is
+offered as an autocorrection, because a duration and a time are
+indistinguishable in the source while needing different replacements.
+
+`Timecop.scale` should be replaced by explicitly calling `travel` or
+`travel_to` with the expected `durations` or `times`, respectively,
+rather than relying on allowing time to continue to flow.
+
+`Timecop.return` should be replaced with `travel_back`, with or
+without a block.
+
+`Timecop.travel` should be replaced by `travel` or `travel_to` when
+passed a `duration` or `time`, respectively. As with `Timecop.scale`,
+rather than relying on time continuing to flow, it should be travelled
+to explicitly.
+
+## Rails version
+
+The cop only runs on Rails 7.1 and newer, where every replacement it
+suggests exists. The version is taken from `TargetRailsVersion`, then
+from the `railties` entry of the lock file, and Rails 7.1 is assumed
+when neither is available.
+
+[#safety-rspecrailstimecop]
+=== Safety
+
+The autocorrection is unsafe because `TimeHelpers` are not included
+by default, and must be manually included by updating `rails_helper`
+accordingly:
+
+```ruby
+RSpec.configure do |config|
+  config.include ActiveSupport::Testing::TimeHelpers
+end
+```
+
+Also, the autocorrection is unsafe because `TimeHelpers` round down
+time to a whole second. Use the `with_usec: true` wherever a test
+depends on the fractional part of a second.
+
+[#examples-rspecrailstimecop]
+=== Examples
+
+[source,ruby]
+----
+# bad
+Timecop.freeze
+Timecop.freeze(duration)
+Timecop.freeze(time)
+
+# good
+freeze_time
+travel(duration)
+travel_to(time)
+
+# bad
+Timecop.freeze { expect(neo).to be_caught }
+Timecop.freeze(duration) { expect(miller_vacation).to last_years }
+Timecop.freeze(time) { expect(top).to spin_forever }
+
+# good
+freeze_time { expect(hand).to stop_bullets }
+travel(duration) { expect(cooper).to grow_corn_again }
+travel_to(time) { expect(us).to need_to_go_deeper }
+
+# bad
+Timecop.travel(duration)
+Timecop.travel(time)
+
+# good
+travel(duration)
+travel_to(time)
+
+# bad
+Timecop.return
+Timecop.return { expect(melissa).to be_erased }
+
+# good
+travel_back
+travel_back { expect(melissa).to be_alive }
+
+# bad
+Timecop.scale(factor)
+Timecop.scale(factor) { expect(marty).to see_diplodocus }
+
+# good
+travel(duration)
+travel_to(time)
+travel(duration) { expect(mccomb).to have_vanished }
+travel_to(time) { expect(marty).to see_a_hoverboard }
+----
+
+[#_spectypes_-configuration-rspecrailstimecop]
+==== `SpecTypes` configuration
+
+[source,ruby]
+----
+# `TimeHelpers` would leak a frozen clock into subsequent examples,
+#  so the cop only inspects those example groups that include the
+# `RSpec::Rails::RailsExampleGroup`, which runs the `after_teardown`.
+
+# Configure the cop to inspect custom types:
+
+# .rubocop.yml
+# RSpecRails/Timecop:
+#   SpecTypes:
+#     - service
+
+# spec/rails_helper.rb
+RSpec.configure do |config|
+  config.include RSpec::Rails::RailsExampleGroup, type: :service
+end
+
+# bad
+RSpec.describe 'TerminationService', type: :service do
+  it 'travels to the past' do
+    Timecop.travel("1984-05-12")
+    expect(t800).to seek_sarah
+  end
+end
+----
+
+[#configurable-attributes-rspecrailstimecop]
+=== Configurable attributes
+
+|===
+| Name | Default value | Configurable values
+
+| SpecTypes
+| `channel`, `controller`, `feature`, `helper`, `job`, `mailer`, `model`, `request`, `routing`, `system`, `view`
+| Array
+|===
+
+[#references-rspecrailstimecop]
+=== References
+
+* https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/Timecop
+
 [#rspecrailstravelaround]
 == RSpecRails/TravelAround
 
