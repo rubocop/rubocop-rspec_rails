@@ -25,7 +25,7 @@ RSpecRails/HardcodedAbsentRecordId:
   AllowedNames: []
   MaxId: 100000
   SafeAutoCorrect: false
-  VersionAdded: '2.33'
+  VersionAdded: "<<next>>"
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/HardcodedAbsentRecordId
 
 RSpecRails/HaveHttpStatus:
