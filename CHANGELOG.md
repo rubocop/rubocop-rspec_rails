@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+- Add new `RSpecRails/HardcodedAbsentRecordId` cop. ([@corsonknowles])
+
 ## 2.33.0 (2026-10-07)
 
 - Add `RSpecRails/FileFixture` cop to prefer `file_fixture` over hardcoded fixture paths. ([@ydah])
@@ -100,6 +102,7 @@
 [@akiomik]: https://github.com/akiomik
 [@anthony-robin]: https://github.com/anthony-robin
 [@bquorning]: https://github.com/bquorning
+[@corsonknowles]: https://github.com/corsonknowles
 [@corydiamand]: https://github.com/corydiamand
 [@eugeneius]: https://github.com/eugeneius
 [@fatkodima]: https://github.com/fatkodima
