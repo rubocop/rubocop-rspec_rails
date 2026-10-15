@@ -71,6 +71,12 @@ RSpec.describe RuboCop::Cop::RSpecRails::HttpStatus do
       expect_no_corrections
     end
 
+    it 'does not register an offense when using :unprocessable_entity' do
+      expect_no_offenses(<<~RUBY)
+        it { is_expected.to have_http_status :unprocessable_entity }
+      RUBY
+    end
+
     it 'does not register an offense when using custom HTTP code' do
       expect_no_offenses(<<~RUBY)
         it { is_expected.to have_http_status 550 }

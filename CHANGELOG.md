@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+- Fix `RSpecRails/HttpStatus` to allow `:unprocessable_entity`. ([@lucthev])
+
 ## 2.33.0 (2026-10-07)
 
 - Add `RSpecRails/FileFixture` cop to prefer `file_fixture` over hardcoded fixture paths. ([@ydah])
@@ -106,6 +108,7 @@
 [@g-rath]: https://github.com/G-Rath
 [@jojos003]: https://github.com/jojos003
 [@koic]: https://github.com/koic
+[@lucthev]: https://github.com/lucthev
 [@mothonmars]: https://github.com/MothOnMars
 [@mvz]: https://github.com/mvz
 [@nzlaura]: https://github.com/nzlaura

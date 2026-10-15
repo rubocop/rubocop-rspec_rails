@@ -145,7 +145,8 @@ module RuboCop
 
           def known_status_symbol?
             node.sym_type? &&
-              ::Rack::Utils::SYMBOL_TO_STATUS_CODE.key?(node.value)
+              (::Rack::Utils::SYMBOL_TO_STATUS_CODE.key?(node.value) ||
+               node.value == :unprocessable_entity)
           end
 
           def known_status_code?
