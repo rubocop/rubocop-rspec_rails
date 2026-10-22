@@ -2,6 +2,9 @@
 
 ## Master (Unreleased)
 
+- Fix `RSpecRails/FileFixture` to detect more forms of hardcoded paths under `spec/fixtures`: a single string, a subdirectory, interpolation, `+` concatenation, chained `join` or `/` calls, and `Rails.root` with `/`, `+`, `File.join` or string interpolation. ([@pjg])
+- Fix a false positive for `RSpecRails/FileFixture` when configuring `file_fixture_path`. ([@pjg])
+
 ## 2.33.0 (2026-10-07)
 
 - Add `RSpecRails/FileFixture` cop to prefer `file_fixture` over hardcoded fixture paths. ([@ydah])
@@ -111,6 +114,7 @@
 [@nzlaura]: https://github.com/nzlaura
 [@paydaylight]: https://github.com/paydaylight
 [@pirj]: https://github.com/pirj
+[@pjg]: https://github.com/pjg
 [@r7kamura]: https://github.com/r7kamura
 [@splattael]: https://github.com/splattael
 [@taketo1113]: https://github.com/taketo1113
