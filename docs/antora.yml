@@ -1,5 +1,6 @@
 name: rubocop-rspec_rails
 title: RuboCop RSpec Rails
-version: ~
+# No version here: docs.rubocop.org derives it from the release tag
+# (v2.34.0 becomes 2.34), so patch versions don't appear in the docs.
 nav:
   - modules/ROOT/nav.adoc
