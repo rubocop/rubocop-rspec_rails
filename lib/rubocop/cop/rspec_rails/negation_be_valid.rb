@@ -64,10 +64,6 @@ module RuboCop
             be_invalid?(node)
           when :be_invalid
             not_to?(node)
-          else
-            # :nocov:
-            :noop
-            # :nocov:
           end
         end
 
@@ -85,10 +81,6 @@ module RuboCop
             'not_to'
           when :be_invalid
             'to'
-          else
-            # :nocov:
-            :noop
-            # :nocov:
           end
         end
 
@@ -98,10 +90,6 @@ module RuboCop
             'be_valid'
           when :be_invalid
             'be_invalid'
-          else
-            # :nocov:
-            :noop
-            # :nocov:
           end
         end
       end

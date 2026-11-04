@@ -6,7 +6,7 @@ module RuboCop
   module RSpecRails
     # A plugin that integrates RuboCop RSpecRails with RuboCop's plugin system.
     class Plugin < LintRoller::Plugin
-      # :nocov:
+      # simplecov:disable
       def about
         LintRoller::About.new(
           name: 'rubocop-rspec_rails',
@@ -15,7 +15,7 @@ module RuboCop
           description: 'Code style checking for RSpec Rails files.'
         )
       end
-      # :nocov:
+      # simplecov:enable
 
       def supported?(context)
         context.engine == :rubocop
