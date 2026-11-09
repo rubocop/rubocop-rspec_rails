@@ -96,6 +96,25 @@ RSpecRails/ReceivePerformLater:
   VersionAdded: '2.33'
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/ReceivePerformLater
 
+RSpecRails/Timecop:
+  Description: Enforces use of ActiveSupport TimeHelpers instead of Timecop.
+  Enabled: pending
+  SafeAutoCorrect: false
+  VersionAdded: "<<next>>"
+  Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/Timecop
+  SpecTypes:
+    - channel
+    - controller
+    - feature
+    - helper
+    - job
+    - mailer
+    - model
+    - request
+    - routing
+    - system
+    - view
+
 RSpecRails/TravelAround:
   Description: Checks for time travel helpers in `around` hooks.
   Enabled: pending

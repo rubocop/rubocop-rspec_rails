@@ -16,6 +16,7 @@ module RuboCop
       register_cop :MinitestAssertions, "#{__dir__}/rspec_rails/minitest_assertions"
       register_cop :NegationBeValid, "#{__dir__}/rspec_rails/negation_be_valid"
       register_cop :ReceivePerformLater, "#{__dir__}/rspec_rails/receive_perform_later"
+      register_cop :Timecop, "#{__dir__}/rspec_rails/timecop"
       register_cop :TravelAround, "#{__dir__}/rspec_rails/travel_around"
     end
   end

@@ -1,5 +1,3 @@
-// START_COP_LIST
-
 === Department xref:cops_rspecrails.adoc[RSpecRails]
 
 * xref:cops_rspecrails.adoc#rspecrailsavoidsetuphook[RSpecRails/AvoidSetupHook]
@@ -11,6 +9,5 @@
 * xref:cops_rspecrails.adoc#rspecrailsminitestassertions[RSpecRails/MinitestAssertions]
 * xref:cops_rspecrails.adoc#rspecrailsnegationbevalid[RSpecRails/NegationBeValid]
 * xref:cops_rspecrails.adoc#rspecrailsreceiveperformlater[RSpecRails/ReceivePerformLater]
+* xref:cops_rspecrails.adoc#rspecrailstimecop[RSpecRails/Timecop]
 * xref:cops_rspecrails.adoc#rspecrailstravelaround[RSpecRails/TravelAround]
-
-// END_COP_LIST
