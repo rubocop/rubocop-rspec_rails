@@ -98,10 +98,6 @@ module RuboCop
             node.source_range.with(
               end_pos: node.right_sibling.source_range.begin_pos
             )
-          else
-            # :nocov:
-            :noop
-            # :nocov:
           end
         end
         # rubocop:enable Metrics/MethodLength

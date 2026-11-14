@@ -52,9 +52,9 @@ module RuboCop
           end
 
           def self.minitest_assertion
-            # :nocov:
+            # simplecov:disable
             raise NotImplementedError
-            # :nocov:
+            # simplecov:enable
           end
 
           def self.match(expected, actual, failure_message)
@@ -81,9 +81,9 @@ module RuboCop
           end
 
           def assertion
-            # :nocov:
+            # simplecov:disable
             raise NotImplementedError
-            # :nocov:
+            # simplecov:enable
           end
         end
 

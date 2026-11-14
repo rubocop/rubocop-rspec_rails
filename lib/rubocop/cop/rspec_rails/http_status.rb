@@ -103,10 +103,6 @@ module RuboCop
             NumericStyleChecker
           when :be_status
             BeStatusStyleChecker
-          else
-            # :nocov:
-            :noop
-            # :nocov:
           end
         end
 
