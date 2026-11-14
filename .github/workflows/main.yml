@@ -36,6 +36,8 @@ jobs:
           - "4.0"
           - ruby-head
           - jruby-9.4
+          - jruby-10.0
+          - jruby-10.1
         task:
           - internal_investigation
           - spec
