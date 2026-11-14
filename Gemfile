@@ -5,7 +5,6 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'bump'
-gem 'irb' # undeclared dependency of yard
 gem 'rack'
 gem 'rake'
 gem 'rspec', '~> 3.11'
