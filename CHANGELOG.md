@@ -2,6 +2,7 @@
 
 ## Master (Unreleased)
 
+- Add new `RSpecRails/HardcodedAbsentRecordId` cop. ([@corsonknowles])
 - Fix `RSpecRails/FileFixture` to detect more forms of hardcoded paths under `spec/fixtures`: a single string, a subdirectory, interpolation, `+` concatenation, chained `join` or `/` calls, and `Rails.root` with `/`, `+`, `File.join` or string interpolation. ([@pjg])
 - Fix a false positive for `RSpecRails/FileFixture` when configuring `file_fixture_path`. ([@pjg])
 
@@ -103,6 +104,7 @@
 [@akiomik]: https://github.com/akiomik
 [@anthony-robin]: https://github.com/anthony-robin
 [@bquorning]: https://github.com/bquorning
+[@corsonknowles]: https://github.com/corsonknowles
 [@corydiamand]: https://github.com/corydiamand
 [@eugeneius]: https://github.com/eugeneius
 [@fatkodima]: https://github.com/fatkodima

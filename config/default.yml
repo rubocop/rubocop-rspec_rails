@@ -19,6 +19,15 @@ RSpecRails/FileFixture:
   VersionAdded: '2.33'
   Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/FileFixture
 
+RSpecRails/HardcodedAbsentRecordId:
+  Description: Checks for a hardcoded id standing in for an absent record.
+  Enabled: pending
+  AllowedNames: []
+  MaxId: 100000
+  SafeAutoCorrect: false
+  VersionAdded: "<<next>>"
+  Reference: https://www.rubydoc.info/gems/rubocop-rspec_rails/RuboCop/Cop/RSpecRails/HardcodedAbsentRecordId
+
 RSpecRails/HaveHttpStatus:
   Description: Checks that tests use `have_http_status` instead of equality matchers.
   Enabled: pending
