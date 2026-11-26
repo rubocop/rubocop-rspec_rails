@@ -5,7 +5,7 @@ module RuboCop
     module RSpecRails
       # Enforces use of ActiveSupport TimeHelpers instead of Timecop.
       #
-      # ## Migration
+      # ### Migration
       #
       # `Timecop.freeze` should be replaced with `freeze_time` when used
       # without arguments. Where a `duration` has been passed to `freeze`, it
@@ -30,7 +30,7 @@ module RuboCop
       # rather than relying on time continuing to flow, it should be travelled
       # to explicitly.
       #
-      # ## Rails version
+      # ### Rails version
       #
       # The cop only runs on Rails 7.1 and newer, where every replacement it
       # suggests exists. The version is taken from `TargetRailsVersion`, then
@@ -185,9 +185,6 @@ module RuboCop
           when :return then on_timecop_return(node)
           when :scale  then on_timecop_scale(node)
           when :travel then on_timecop_travel(node)
-          # :nocov:
-          else nil # rubocop:disable Style/EmptyElse
-            # :nocov:
           end
         end
 
