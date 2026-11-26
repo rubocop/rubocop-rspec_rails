@@ -53,6 +53,9 @@ module RuboCop
       #   time to a whole second. Use the `with_usec: true` wherever a test
       #   depends on the fractional part of a second.
       #
+      # @safety
+      #   Also, the autocorrection is unsafe for nested `Timecop` calls.
+      #
       # @example
       #   # bad
       #   Timecop.freeze
